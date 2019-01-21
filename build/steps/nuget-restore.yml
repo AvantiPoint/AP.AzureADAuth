@@ -1,0 +1,14 @@
+parameters:
+  solution: '**/*.sln'
+
+steps:
+- task: NuGetToolInstaller@0
+  displayName: Use NuGet 4.7.1
+  inputs:
+    versionSpec: 4.7.1
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: ${{ parameters.solution }}
+    noCache: true
