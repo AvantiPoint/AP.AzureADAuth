@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -25,20 +24,12 @@ namespace AP.AzureADAuth.ViewModels
             _authenticationService = authenticationService;
             _eventAggregator = eventAggregator;
             _logger = logger;
-            this.PropertyChanged += OnPropertyChanged;
 
-            _isBusyHelper = this.WhenAnyObservable(x => x.LoginCommand.IsExecuting)
-                .ToProperty(this, x => x.IsBusy, false);
             LoginCommand = ReactiveCommand.CreateFromTask(OnLoginCommandExecuted,
                 this.WhenAnyValue(x => x.IsBusy)
                 .Select(x => !x));
-            System.Diagnostics.Trace.WriteLine("Finished ctor");
-        }
-
-        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            System.Diagnostics.Trace.WriteLine($"Property Changed: {e.PropertyName}");
-            System.Diagnostics.Trace.WriteLine($"IsBusy: {IsBusy}");
+            _isBusyHelper = this.WhenAnyObservable(x => x.LoginCommand.IsExecuting)
+                .ToProperty(this, x => x.IsBusy, false);
         }
 
         private ObservableAsPropertyHelper<bool> _isBusyHelper { get; }
@@ -50,7 +41,6 @@ namespace AP.AzureADAuth.ViewModels
         {
             _logger.TrackEvent("Login Page");
 
-            System.Diagnostics.Trace.WriteLine($"Command Can Execute: {await LoginCommand.CanExecute.FirstAsync()}");
             await LoginCommand.Execute();
         }
 
@@ -60,9 +50,6 @@ namespace AP.AzureADAuth.ViewModels
         {
             try
             {
-                System.Diagnostics.Trace.WriteLine("Login Command is Executing");
-                System.Diagnostics.Trace.WriteLine($"Command Can Execute: {await LoginCommand.CanExecute.FirstAsync()}");
-                await Task.Delay(5000);
                 var result = await _authenticationService.LoginAsync();
 
                 if (!(result is null))

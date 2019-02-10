@@ -47,19 +47,6 @@ namespace ShellApp
             ea.GetEvent<UserAuthenticatedEvent>().Subscribe(OnUserAuthenticatedEventPublished);
             ea.GetEvent<UserLoggedOutEvent>().Subscribe(OnUserLoggedOutEventPublished);
 
-            try
-            {
-                var c = Container.GetContainer();
-                var registrations = c.GetServiceRegistrations();
-                Trace.WriteLine(JsonConvert.SerializeObject(registrations, Formatting.Indented));
-                var view = Container.Resolve<object>("login");
-            }
-            catch(Exception ex)
-            {
-                Trace.WriteLine(ex);
-                Debugger.Break();
-            }
-
             var result = await NavigationService.NavigateAsync("login");
 
             if (!result.Success)

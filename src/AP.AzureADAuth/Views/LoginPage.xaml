@@ -4,11 +4,9 @@
              xmlns:i18n="clr-namespace:AP.AzureADAuth.i18n"
              xmlns:xaml="clr-namespace:AP.AzureADAuth.Xaml"
              x:Class="AP.AzureADAuth.Views.LoginPage">
-  <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+  <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
 
-    <StackLayout AbsoluteLayout.LayoutFlags="All" 
-                 AbsoluteLayout.LayoutBounds="0,0,1,1"
-                 VerticalOptions="Center"
+    <StackLayout VerticalOptions="Center"
                  HorizontalOptions="Center">
       <Image Aspect="AspectFit"
              WidthRequest="300"
@@ -23,15 +21,24 @@
               Padding="10,5"/>
     </StackLayout>
 
+    <BoxView BackgroundColor="Black"
+             Opacity="0.6"
+             VerticalOptions="FillAndExpand"
+             HorizontalOptions="FillAndExpand"
+             IsVisible="{Binding IsBusy}" />
     <StackLayout IsVisible="{Binding IsBusy}"
                  Padding="12"
-                 AbsoluteLayout.LayoutFlags="PositionProportional"
-                 AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1">
-      <ActivityIndicator IsRunning="{Binding IsBusy}" Color ="White"/>
+                 BackgroundColor="Transparent"
+                 VerticalOptions="CenterAndExpand"
+                 HorizontalOptions="CenterAndExpand">
+      <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                         Color ="White"/>
       <Label Text="{x:Static i18n:Resources.Loading}"
              HorizontalOptions="Center"
-             TextColor="White"/>
+             TextColor="White"
+             FontSize="Large"
+             Margin="20,10"/>
     </StackLayout>
 
-  </AbsoluteLayout>
+  </Grid>
 </ContentPage>
