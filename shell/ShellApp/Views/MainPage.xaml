@@ -4,11 +4,10 @@
              xmlns:local="clr-namespace:ShellApp"
              x:Class="ShellApp.Views.MainPage">
 
-  <StackLayout>
-    <Label AutomationId="HelloWorld" 
-           Text="Welcome to Xamarin.Forms!" 
-           HorizontalOptions="Center"
-           VerticalOptions="CenterAndExpand" />
-  </StackLayout>
+  <ScrollView Padding="{OnPlatform Default='20', iOS='20,40,20,20'}">
+    <Label AutomationId="JwtPayload"
+           LineBreakMode="WordWrap"
+           Text="{Binding JwtPayload}" />
+  </ScrollView>
 
 </ContentPage>

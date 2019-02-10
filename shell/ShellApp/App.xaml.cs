@@ -14,6 +14,7 @@ using Prism.Ioc;
 using Prism.Logging;
 using Prism.Logging.Syslog;
 using Prism.Modularity;
+using Prism.Navigation;
 using ShellApp.Helpers;
 using ShellApp.Views;
 using Xamarin.Forms;
@@ -128,7 +129,7 @@ namespace ShellApp
 
         private void OnUserAuthenticatedEventPublished(AuthenticationResult authResult)
         {
-            NavigationService.NavigateAsync("/NavigationPage/MainPage");
+            NavigationService.NavigateAsync("/NavigationPage/MainPage", ("authResult", authResult));
         }
     }
 }
