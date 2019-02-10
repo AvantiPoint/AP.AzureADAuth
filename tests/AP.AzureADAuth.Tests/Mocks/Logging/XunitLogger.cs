@@ -33,6 +33,9 @@ namespace AP.AzureADAuth.Tests.Mocks.Logging
 
         public void Log(string message, Category category, Priority priority) =>
             _testOutputHelper.WriteLine($"{category} - {priority}: {message}");
+
+        public void TrackEvent(string name, IDictionary<string, string> properties) =>
+            Log(name, properties);
     }
 }
 

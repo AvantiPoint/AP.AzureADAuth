@@ -20,9 +20,6 @@ namespace AP.AzureADAuth.Tests.Tests
         public void UpdateTestOutputHelper(ITestOutputHelper testOutputHelper)
         {
             _testOutputHelper = testOutputHelper;
-            if (Log.Listeners.Any())
-                Log.Listeners.Clear();
-            Log.Listeners.Add(new XunitLogListener(_testOutputHelper));
         }
 
         public XunitApp CreateApp()
