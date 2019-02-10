@@ -12,12 +12,15 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@0
-  displayName: Use NuGet 4.7.1
+  displayName: Use NuGet 4.9.2
   inputs:
-    versionSpec: 4.7.1
+    versionSpec: 4.9.2
 
 - task: NuGetCommand@2
   displayName: 'NuGet restore'
+  inputs:
+    feedsToUse: config
+    nugetConfigPath: NuGet.config
 
 - task: MSBuild@1
   displayName: Build Solution
