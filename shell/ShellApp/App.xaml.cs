@@ -5,6 +5,9 @@ using AP.AzureADAuth;
 using AP.AzureADAuth.Events;
 using AP.AzureADAuth.Services;
 using DryIoc;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using Prism;
@@ -12,6 +15,7 @@ using Prism.DryIoc;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Logging;
+using Prism.Logging.AppCenter;
 using Prism.Logging.Syslog;
 using Prism.Modularity;
 using Prism.Navigation;
@@ -33,7 +37,12 @@ namespace ShellApp
         {
             InitializeComponent();
 
+#if DEBUG
             Log.Listeners.Add(new DelegateLogListener(InternalLogger));
+#else
+            AppCenter.Start(Secrets.AppCenterSecret, typeof(Analytics), typeof(Crashes));
+#endif
+
             var ea = Container.Resolve<IEventAggregator>();
             ea.GetEvent<UserAuthenticatedEvent>().Subscribe(OnUserAuthenticatedEventPublished);
             ea.GetEvent<UserLoggedOutEvent>().Subscribe(OnUserLoggedOutEventPublished);
@@ -72,9 +81,14 @@ namespace ShellApp
         {
             containerRegistry.RegisterInstance(new UIParent(null, true));
             containerRegistry.RegisterSingleton<IAuthOptions, AuthOptions>();
+#if DEBUG
             containerRegistry.RegisterSingleton<ISyslogOptions, SyslogOptions>();
             containerRegistry.GetContainer().RegisterMany<SyslogLogger>(Reuse.Singleton,
                     serviceTypeCondition: t => typeof(SyslogLogger).ImplementsServiceType(t));
+#else
+            containerRegistry.GetContainer().RegisterMany<AppCenterLogger>(Reuse.Singleton,
+                    serviceTypeCondition: t => typeof(AppCenterLogger).ImplementsServiceType(t));
+#endif
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
             containerRegistry.RegisterForNavigation<TabbedPage>();

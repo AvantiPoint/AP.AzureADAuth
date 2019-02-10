@@ -16,6 +16,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Prism.DryIoc.Forms" Version="7.2.0.949-ci" />
+    <PackageReference Include="Prism.Plugin.Logging.AppCenter" Version="1.3.0.305" />
     <PackageReference Include="Prism.Plugin.Logging.Syslog" Version="1.3.0.305" />
     <PackageReference Include="Xamarin.Forms" Version="3.5.0.129452" />
   </ItemGroup>
