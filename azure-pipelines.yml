@@ -25,8 +25,6 @@ steps:
 - task: MSBuild@1
   displayName: Build Solution
   inputs:
-    msbuildVersion: 16.0
-    solution: AP.AzureADAuth.sln
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
 
