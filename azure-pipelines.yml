@@ -25,6 +25,7 @@ steps:
 - task: MSBuild@1
   displayName: Build Solution
   inputs:
+    msbuildVersion: 16.0
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
 
