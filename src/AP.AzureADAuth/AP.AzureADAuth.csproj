@@ -5,6 +5,7 @@
     <IsPackable>true</IsPackable>
     <Description>Prism Forms Module for adding Authentication with Azure Active Directory or Azure Active Directory B2C.</Description>
     <NeutralLanguage>EN</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
