@@ -26,7 +26,7 @@ steps:
   displayName: Build Solution
   inputs:
     msbuildVersion: 16.0
-    solution: src/AP.AzureADAuth/AP.AzureADAuth.csproj
+    solution: AP.AzureADAuth.sln
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
 
