@@ -12,9 +12,9 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@0
-  displayName: Use NuGet 4.9.2
+  displayName: Use NuGet 4.9.3
   inputs:
-    versionSpec: 4.9.2
+    versionSpec: 4.9.3
 
 - task: NuGetCommand@2
   displayName: 'NuGet restore'
@@ -26,6 +26,7 @@ steps:
   displayName: Build Solution
   inputs:
     msbuildVersion: 16.0
+    solution: src/AP.AzureADAuth/AP.AzureADAuth.csproj
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
 
