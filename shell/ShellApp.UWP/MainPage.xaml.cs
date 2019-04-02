@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Identity.Client;
+using Prism;
+using Prism.Ioc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,13 +18,18 @@ using Windows.UI.Xaml.Navigation;
 
 namespace ShellApp.UWP
 {
-    public sealed partial class MainPage
+    public sealed partial class MainPage : IPlatformInitializer
     {
         public MainPage()
         {
             this.InitializeComponent();
 
-            LoadApplication(new ShellApp.App());
+            LoadApplication(new ShellApp.App(this));
+        }
+
+        public void RegisterTypes(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.RegisterInstance(new UIParent());
         }
     }
 }
