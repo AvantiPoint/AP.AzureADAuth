@@ -59,16 +59,22 @@ namespace AP.AzureADAuth.ViewModels
             }
             catch (Exception ex)
             {
-                if (ex is MsalException msal && msal.ErrorCode == MsalClientException.AuthenticationCanceledError)
-                {
-                    _logger.TrackEvent("User Canceled Login");
-                    return;
-                }
-
-                _logger.Report(ex, new Dictionary<string, string>
+                var data = new Dictionary<string, string>
                 {
                     { "page", "Login" }
-                });
+                };
+
+                if(ex is MsalException msal)
+                {
+                    data.Add("errorCode", msal.ErrorCode);
+                    if (msal.ErrorCode == MsalError.AuthenticationCanceledError)
+                    {
+                        _logger.TrackEvent("User Canceled Login");
+                        return;
+                    }
+                }
+
+                _logger.Report(ex, data);
             }
         }
     }

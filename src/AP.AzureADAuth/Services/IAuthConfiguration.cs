@@ -2,13 +2,13 @@
 
 namespace AP.AzureADAuth.Services
 {
-    public interface IAuthOptions
+    internal interface IAuthConfiguration
     {
-        LogLevel? LogLevel { get; }
-        string Tenant { get; }
+        string Authority { get; }
         string Policy { get; }
         string[] Scopes { get; }
         string ClientId { get; }
-        bool IsB2C { get; }
+        string RedirectUri { get; }
+        LogLevel? LogLevel { get; }
     }
 }

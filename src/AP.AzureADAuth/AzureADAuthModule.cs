@@ -9,6 +9,7 @@ using Prism.Events;
 using Prism.Ioc;
 using Prism.Logging;
 using Prism.Modularity;
+using Prism.Services;
 
 namespace AP.AzureADAuth
 {
@@ -17,10 +18,12 @@ namespace AP.AzureADAuth
         private IAuthenticationService _authenticationService;
         private IEventAggregator _eventAggregator;
         private ILogger _logger;
+        private IContainerProvider _containerProvider;
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
             _authenticationService = containerProvider.Resolve<IAuthenticationService>();
+            _containerProvider = containerProvider;
             _eventAggregator = containerProvider.Resolve<IEventAggregator>();
             _logger = containerProvider.Resolve<ILogger>();
 
@@ -34,25 +37,72 @@ namespace AP.AzureADAuth
                 containerRegistry.RegisterSingleton<ILogger, ConsoleLoggingService>();
             }
 
-            if (!containerRegistry.IsRegistered<UIParent>())
+            if (containerRegistry.IsRegistered<IAuthOptions>())
             {
-                containerRegistry.RegisterInstance(new UIParent());
+                containerRegistry.Register<IAuthConfiguration, UserDefinedConfiguration>();
+                if(((IContainerProvider)containerRegistry).Resolve<IAuthOptions>().IsB2C)
+                {
+                    containerRegistry.RegisterInstance<Func<IPublicClientApplication>>(CreateB2CClient);
+                }
+                else
+                {
+                    containerRegistry.RegisterInstance<Func<IPublicClientApplication>>(CreateAADClient);
+                }
+            }
+            else if(containerRegistry.IsRegistered<IB2COptions>())
+            {
+                containerRegistry.Register<IAuthConfiguration, DefaultB2CConfiguration>();
+                containerRegistry.RegisterInstance<Func<IPublicClientApplication>>(CreateB2CClient);
+            }
+            else if(containerRegistry.IsRegistered<IAADOptions>())
+            {
+                containerRegistry.Register<IAuthConfiguration, DefaultAADConfiguration>();
+                containerRegistry.RegisterInstance<Func<IPublicClientApplication>>(CreateAADClient);
+            }
+            else
+            {
+                ((IContainerProvider)containerRegistry).Resolve<IPageDialogService>().DisplayAlertAsync("Error", "You must register a a configuration for Azure Active Directory or Azure Active Directory B2C", "Ok");
+                throw new ModuleInitializeException("No configuration for Azure Active Directory or Azure Active Directory B2C was found");
             }
 
-            var c = ((IContainerExtension)containerRegistry);
-            IAuthOptions options = containerRegistry.IsRegistered<IAuthOptions>() ?
-                c.Resolve<IAuthOptions>() :
-                c.Resolve<DefaultAuthOptions>();
-            var authority = $"https://login.microsoftonline.com/tfp/{options.Tenant}/{options.Policy}";
-
-            IPublicClientApplication pca = options.IsB2C ?
-                new PublicClientApplication(options.ClientId, authority) :
-                new PublicClientApplication(options.ClientId);
-            pca.RedirectUri = $"msal{options.ClientId}://auth";
-
-            containerRegistry.RegisterInstance<IPublicClientApplication>(pca);
             containerRegistry.Register<IAuthenticationService, AuthenticationService>();
             containerRegistry.RegisterForNavigation<LoginPage, LoginPageViewModel>("login");
+        }
+
+        private IPublicClientApplication CreateAADClient()
+        {
+            if (_containerProvider is null) return null;
+
+            var configuration = _containerProvider.Resolve<IAuthConfiguration>();
+
+            return CreateBaseBuilder(configuration)
+                .Build();
+        }
+
+        private IPublicClientApplication CreateB2CClient()
+        {
+            if (_containerProvider is null) return null;
+
+            var configuration = _containerProvider.Resolve<IAuthConfiguration>();
+
+            return CreateBaseBuilder(configuration)
+                    .WithB2CAuthority(configuration.Authority)
+                    .Build();
+        }
+
+        private PublicClientApplicationBuilder CreateBaseBuilder(IAuthConfiguration configuration)
+        {
+            return PublicClientApplicationBuilder.Create(configuration.ClientId)
+                                                 .WithRedirectUri(configuration.RedirectUri)
+#if __IOS__
+                                                 .WithIosKeychainSecurityGroup(Xamarin.Essentials.AppInfo.PackageName)
+#endif
+                                                 .WithLogging(AADLog, configuration.LogLevel);
+        }
+
+        private void AADLog(LogLevel level, string message, bool containsPii)
+        {
+            _logger.Log(message, new Dictionary<string, string> { { "level", $"{level}" }, { "containsPii", $"{containsPii}" } });
         }
 
         private async void OnLogoutRequestedEventPublished()
@@ -68,7 +118,6 @@ namespace AP.AzureADAuth
             {
                 _logger.Report(ex, new Dictionary<string, string> { { "event", nameof(OnLogoutRequestedEventPublished) } });
             }
-            
         }
     }
 }

@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2050
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28606.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShellApp.Android", "shell\ShellApp.Android\ShellApp.Android.csproj", "{7F72CF1C-95BD-467C-B179-9F2C7985EFCA}"
 EndProject
@@ -492,4 +491,3 @@ Global
 		SolutionGuid = {918D4D16-7D8B-42CA-AD6C-D4C871126959}
 	EndGlobalSection
 EndGlobal
-

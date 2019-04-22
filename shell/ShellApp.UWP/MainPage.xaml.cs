@@ -24,12 +24,12 @@ namespace ShellApp.UWP
         {
             this.InitializeComponent();
 
-            LoadApplication(new ShellApp.App(this));
+            LoadApplication(new ShellApp.App());
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterInstance(new UIParent());
+
         }
     }
 }

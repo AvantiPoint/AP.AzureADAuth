@@ -9,6 +9,7 @@ using Android.OS;
 using Prism;
 using Prism.Ioc;
 using Microsoft.Identity.Client;
+using Plugin.CurrentActivity;
 
 namespace ShellApp.Droid
 {
@@ -17,13 +18,15 @@ namespace ShellApp.Droid
     {
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterInstance(new UIParent(this, true));
+            containerRegistry.RegisterInstance<ICurrentActivity>(CrossCurrentActivity.Current);
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
+
+            Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this, savedInstanceState);
 
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);

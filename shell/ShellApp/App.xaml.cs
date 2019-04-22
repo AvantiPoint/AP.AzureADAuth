@@ -66,8 +66,7 @@ namespace ShellApp
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterInstance(new UIParent(null, true));
-            containerRegistry.RegisterSingleton<IAuthOptions, AuthOptions>();
+            containerRegistry.RegisterSingleton<IB2COptions, B2COptions>();
 #if DEBUG
             containerRegistry.RegisterSingleton<ISyslogOptions, SyslogOptions>();
             containerRegistry.GetContainer().RegisterMany<SyslogLogger>(Reuse.Singleton,

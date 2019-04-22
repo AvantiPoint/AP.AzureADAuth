@@ -1,29 +1,52 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
+#if __ANDROID__
+using Plugin.CurrentActivity;
+#elif WINDOWS_UWP
+using Windows.UI.Xaml;
+#endif
 
 namespace AP.AzureADAuth.Services
 {
     internal class AuthenticationService : IAuthenticationService
     {
-        private IAuthOptions AuthOptions { get; }
-        private UIParent UIParent { get; }
-        private IPublicClientApplication PublicClientApplication { get; }
+        IAuthConfiguration _configuration { get; }
+        IPublicClientApplication _client { get; }
 
-        public AuthenticationService(IAuthOptions authOptions, IPublicClientApplication publicClientApplication, UIParent uiParent)
+#if __ANDROID__
+        ICurrentActivity CurrentActivity { get; }
+
+        public AuthenticationService(Func<IPublicClientApplication> pcaFactory, IAuthConfiguration configuration,
+            ICurrentActivity currentActivity)
         {
-            AuthOptions = authOptions;
-            PublicClientApplication = publicClientApplication;
-            UIParent = uiParent;
+            _client = pcaFactory();
+            _configuration = configuration;
+            CurrentActivity = currentActivity;
         }
+#else
+        public AuthenticationService(Func<IPublicClientApplication> pcaFactory, IAuthConfiguration configuration)
+        {
+            _client = pcaFactory();
+            _configuration = configuration;
+        }
+#endif
 
         public async Task<AuthenticationResult> LoginAsync()
         {
             var result = await LoginSilentAsync();
             if (result is null)
             {
-                var accounts = await PublicClientApplication.GetAccountsAsync();
-                result = await PublicClientApplication.AcquireTokenAsync(AuthOptions.Scopes, accounts?.FirstOrDefault(), UIParent);
+                var accounts = await _client.GetAccountsAsync();
+                var builder = _client.AcquireTokenInteractive(_configuration.Scopes)
+                    .WithAccount(accounts.FirstOrDefault());
+
+#if __ANDROID__
+                builder = builder.WithParentActivityOrWindow(CurrentActivity.Activity);
+#endif
+                result = await builder.WithUseEmbeddedWebView(true)
+                                      .ExecuteAsync();
             }
 
             return result;
@@ -33,8 +56,9 @@ namespace AP.AzureADAuth.Services
         {
             try
             {
-                var accounts = await PublicClientApplication.GetAccountsAsync();
-                return await PublicClientApplication.AcquireTokenSilentAsync(AuthOptions.Scopes, accounts?.FirstOrDefault());
+                var accounts = await _client.GetAccountsAsync();
+                return await _client.AcquireTokenSilent(_configuration.Scopes, accounts.FirstOrDefault())
+                                    .ExecuteAsync();
             }
             catch
             {
@@ -44,11 +68,9 @@ namespace AP.AzureADAuth.Services
 
         public async Task LogoutAsync()
         {
-            var accounts = await PublicClientApplication.GetAccountsAsync();
-            if (!accounts?.Any() ?? false) return;
-
-            foreach (var acct in accounts)
-                await PublicClientApplication.RemoveAsync(acct);
+            var accounts = await _client.GetAccountsAsync();
+            foreach (var account in accounts)
+                await _client.RemoveAsync(account);
         }
     }
 }

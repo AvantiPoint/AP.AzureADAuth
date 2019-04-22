@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="3.5.0.169047" />
+    <PackageReference Include="Xamarin.Forms" Version="3.6.0.344457" />
     <PackageReference Include="Xamarin.Android.Support.Annotations" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.Collections" Version="28.0.0.1" />
     <PackageReference Include="Xamarin.Android.Support.CustomTabs" Version="28.0.0.1" />
@@ -112,6 +112,10 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\AP.AzureADAuth\AP.AzureADAuth.csproj">
+      <Project>{6dd5f8f8-b508-4451-be11-fbbaab313a98}</Project>
+      <Name>AP.AzureADAuth</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShellApp\ShellApp.csproj">
       <Project>{74799366-0980-4850-998E-478CB4C5EC8F}</Project>
       <Name>ShellApp</Name>
