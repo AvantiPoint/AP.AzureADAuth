@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Reactive;
+using System.Threading.Tasks;
 using AP.AzureADAuth.Events;
 using AP.AzureADAuth.Services;
 using AP.AzureADAuth.ViewModels;
@@ -10,6 +12,7 @@ using Prism.Ioc;
 using Prism.Logging;
 using Prism.Modularity;
 using Prism.Services;
+using ReactiveUI;
 
 namespace AP.AzureADAuth
 {
@@ -20,6 +23,15 @@ namespace AP.AzureADAuth
         private ILogger _logger;
         private IContainerProvider _containerProvider;
 
+        public AzureADAuthModule()
+        {
+            LogoutCommand = ReactiveCommand.CreateFromTask(OnLogoutCommandExecuted);
+            RefreshTokenCommand = ReactiveCommand.CreateFromTask(OnRefreshTokenCommandExecuted);
+        }
+
+        private ReactiveCommand<Unit, Unit> LogoutCommand { get; }
+        private ReactiveCommand<Unit, Unit> RefreshTokenCommand { get; }
+
         public void OnInitialized(IContainerProvider containerProvider)
         {
             _authenticationService = containerProvider.Resolve<IAuthenticationService>();
@@ -28,6 +40,7 @@ namespace AP.AzureADAuth
             _logger = containerProvider.Resolve<ILogger>();
 
             _eventAggregator.GetEvent<LogoutRequestedEvent>().Subscribe(OnLogoutRequestedEventPublished);
+            _eventAggregator.GetEvent<RefreshTokenRequestedEvent>().Subscribe(OnRefreshTokenRequestedEventPublished);
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
@@ -76,7 +89,7 @@ namespace AP.AzureADAuth
             var configuration = _containerProvider.Resolve<IAuthConfiguration>();
 
             return CreateBaseBuilder(configuration)
-                .Build();
+                    .Build();
         }
 
         private IPublicClientApplication CreateB2CClient()
@@ -105,7 +118,36 @@ namespace AP.AzureADAuth
             _logger.Log(message, new Dictionary<string, string> { { "level", $"{level}" }, { "containsPii", $"{containsPii}" } });
         }
 
-        private async void OnLogoutRequestedEventPublished()
+        private void OnLogoutRequestedEventPublished()
+        {
+            LogoutCommand.Execute();
+        }
+
+        private void OnRefreshTokenRequestedEventPublished()
+        {
+            RefreshTokenCommand.Execute();
+        }
+
+        private async Task OnRefreshTokenCommandExecuted()
+        {
+            try
+            {
+                _logger.TrackEvent("Token Refresh Requested");
+                var result = await _authenticationService.LoginSilentAsync();
+                if(result is null)
+                {
+                    _logger.TrackEvent("Unable to Refresh Token");
+                }
+
+                _eventAggregator.GetEvent<TokenRefreshedEvent>().Publish(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Report(ex, new Dictionary<string, string> { { "event", "Logout Requested Event" } });
+            }
+        }
+
+        private async Task OnLogoutCommandExecuted()
         {
             try
             {
@@ -116,7 +158,7 @@ namespace AP.AzureADAuth
             }
             catch (Exception ex)
             {
-                _logger.Report(ex, new Dictionary<string, string> { { "event", nameof(OnLogoutRequestedEventPublished) } });
+                _logger.Report(ex, new Dictionary<string, string> { { "event", "Logout Requested Event" } });
             }
         }
     }

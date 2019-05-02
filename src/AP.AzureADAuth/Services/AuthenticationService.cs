@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Identity.Client;
 #if __ANDROID__
 using Plugin.CurrentActivity;
-#elif WINDOWS_UWP
-using Windows.UI.Xaml;
 #endif
 
 namespace AP.AzureADAuth.Services
@@ -40,7 +38,7 @@ namespace AP.AzureADAuth.Services
             {
                 var accounts = await _client.GetAccountsAsync();
                 var builder = _client.AcquireTokenInteractive(_configuration.Scopes)
-                    .WithAccount(accounts.FirstOrDefault());
+                                     .WithAccount(accounts.FirstOrDefault());
 
 #if __ANDROID__
                 builder = builder.WithParentActivityOrWindow(CurrentActivity.Activity);
@@ -58,6 +56,7 @@ namespace AP.AzureADAuth.Services
             {
                 var accounts = await _client.GetAccountsAsync();
                 return await _client.AcquireTokenSilent(_configuration.Scopes, accounts.FirstOrDefault())
+                                    .WithForceRefresh(true)
                                     .ExecuteAsync();
             }
             catch
