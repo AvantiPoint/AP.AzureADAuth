@@ -102,6 +102,7 @@ stages:
 
 - stage: Deploy
   displayName: Deploy to MyGet.org
+  condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false))
   jobs:
   - deployment: myget
     displayName: MyGet.org
@@ -110,15 +111,11 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: DownloadBuildArtifacts@0
-            inputs:
-              artifactName: 'NuGet'
-              downloadPath: '$(System.ArtifactsDirectory)'
           - task: NuGetCommand@2
             displayName: 'NuGet push'
             inputs:
                 command: push
-                packagesToPush: '$(System.ArtifactsDirectory)/**/*.nupkg'
+                packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg'
                 nuGetFeedType: external
                 publishFeedCredentials: 'DanSiegel-MyGet'
   - deployment: nuget
@@ -128,14 +125,10 @@ stages:
       runOnce:
         deploy:
           steps:
-          - task: DownloadBuildArtifacts@0
-            inputs:
-              artifactName: 'NuGet'
-              downloadPath: '$(System.ArtifactsDirectory)'
           - task: NuGetCommand@2
             displayName: 'NuGet push'
             inputs:
                 command: push
-                packagesToPush: '$(System.ArtifactsDirectory)/**/*.nupkg;!$(System.ArtifactsDirectory)/**/*.symbols.nupkg;!$(System.ArtifactsDirectory)/**/*-ci*'
+                packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg;!$(Pipeline.Workspace)/**/*.symbols.nupkg;!$(Pipeline.Workspace)/**/*-ci*'
                 nuGetFeedType: external
                 publishFeedCredentials: 'NuGet'
