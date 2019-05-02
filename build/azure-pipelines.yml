@@ -23,9 +23,9 @@ variables:
 stages:
 - stage: Build
   jobs:
-  - template: phases/build-module.yml
+  - template: jobs/build-module.yml
 
-# - template: phases/android.yml
+# - template: jobs/android.yml
 #   parameters:
 #     dependsOn: 'BuildModule'
 #     displayName: 'Build Android App for UI Tests'
@@ -38,7 +38,7 @@ stages:
 #     appcenterSecret: ''
 #     backendUri: '$(MockBackend)'
 
-# - template: phases/ios.yml
+# - template: jobs/ios.yml
 #   parameters:
 #     dependsOn: 'BuildModule'
 #     displayName: 'Build iOS App for UI Tests'
@@ -52,7 +52,7 @@ stages:
 #     appcenterSecret: ''
 #     backendUri: '$(MockBackend)'
 
-# - template: phases/run-uitests.yml
+# - template: jobs/run-uitests.yml
 #   parameters:
 #     phase: 'RunAndroidUITest'
 #     displayName: 'Android UI Tests'
@@ -63,7 +63,7 @@ stages:
 #     devices: '$(AndroidAppCenterDevices)'
 #     series: 'beta'
 
-# - template: phases/run-uitests.yml
+# - template: jobs/run-uitests.yml
 #   parameters:
 #     phase: 'RuniOSUITest'
 #     displayName: 'iOS UI Tests'
@@ -75,7 +75,7 @@ stages:
 #     devices: '$(iOSAppCenterDevices)'
 #     series: 'beta'
 
-# - template: phases/android.yml
+# - template: jobs/android.yml
 #   parameters:
 #     dependsOn: 'RunAndroidUITest'
 #     displayName: 'Build Android App for Distribution'
@@ -88,7 +88,7 @@ stages:
 #     appcenterSecret: '$(AndroidAppCenterSecret)'
 #     backendUri: '$(BackendUri)'
 
-# - template: phases/ios.yml
+# - template: jobs/ios.yml
 #   parameters:
 #     dependsOn: 'RuniOSUITest'
 #     displayName: 'Build iOS App for Distribution'
