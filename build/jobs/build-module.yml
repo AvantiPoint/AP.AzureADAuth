@@ -8,6 +8,12 @@ phases:
   queue:
     name: Hosted VS2017
 
+jobs:
+- job:
+  pool:
+    vmImage: windows-2019
+    demands:
+    - MSBuild
   steps:
   - template: ../steps/nuget-restore.yml
     parameters:
@@ -17,6 +23,8 @@ phases:
     parameters:
       appcenterSecret: ''
       backendUri: ''
+      tenantName: ''
+      clientId: ''
 
   - task: MSBuild@1
     displayName: 'Build Module'
@@ -31,6 +39,7 @@ phases:
       command: test
       projects: 'tests/**/*.Tests.csproj'
       arguments: '-c $(BuildConfiguration) --collect:"Code Coverage" --no-build'
+    enabled: false
 
   - powershell: ./Sign-Packages.ps1
     workingDirectory: build
@@ -43,7 +52,7 @@ phases:
       SignClientTenantId: $(SignClientTenantId)
       SignServiceUrl: $(SignServiceUrl)
       SignServiceResourceId: $(SignServiceResourceId)
-    condition: and(succeeded(), not(eq(variables['build.reason'], 'PullRequest')), not(eq(variables['SignClientSecret'], '')), not(eq(variables['SignClientUser'], '')))
+    condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false))
 
   - task: PublishBuildArtifacts@1
     displayName: Publish Package Artifacts

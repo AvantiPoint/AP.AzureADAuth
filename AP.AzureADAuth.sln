@@ -23,7 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
-		azure-pipelines.yml = azure-pipelines.yml
 		Directory.build.props = Directory.build.props
 		LICENSE = LICENSE
 		NuGet.config = NuGet.config
@@ -34,12 +33,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1CE3C538-FEA
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AP.AzureADAuth", "src\AP.AzureADAuth\AP.AzureADAuth.csproj", "{6DD5F8F8-B508-4451-BE11-FBBAAB313A98}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "phases", "phases", "{142E2F41-A555-46E5-9F13-81F50FD08BD2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "jobs", "jobs", "{142E2F41-A555-46E5-9F13-81F50FD08BD2}"
 	ProjectSection(SolutionItems) = preProject
-		build\phases\android.yml = build\phases\android.yml
-		build\phases\build-module.yml = build\phases\build-module.yml
-		build\phases\ios.yml = build\phases\ios.yml
-		build\phases\run-uitests.yml = build\phases\run-uitests.yml
+		build\jobs\android.yml = build\jobs\android.yml
+		build\jobs\build-module.yml = build\jobs\build-module.yml
+		build\jobs\ios.yml = build\jobs\ios.yml
+		build\jobs\run-uitests.yml = build\jobs\run-uitests.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "steps", "steps", "{C749D231-26D1-4660-B708-8CD77E7CE7F8}"
