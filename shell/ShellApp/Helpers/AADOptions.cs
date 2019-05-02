@@ -3,10 +3,10 @@ using Microsoft.Identity.Client;
 
 namespace ShellApp.Helpers
 {
-    public class B2COptions : IB2COptions
+    public class AADOptions : IAADOptions
     {
         public string Tenant => Secrets.TenantName;
         public string ClientId => Secrets.ClientId;
-        public LogLevel? LogLevel => Microsoft.Identity.Client.LogLevel.Verbose;
+        public LogLevel? LogLevel { get; }
     }
 }
