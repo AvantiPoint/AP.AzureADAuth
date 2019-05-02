@@ -1,9 +1,6 @@
 parameters:
   solution: '**/*.sln'
 
-phases:
-- phase: BuildModule
-
 stages:
 - stage: BuildModule
   displayName: Build Module
