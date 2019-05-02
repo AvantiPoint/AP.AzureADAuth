@@ -21,9 +21,7 @@ variables:
   value: '**/*.sln'
 
 stages:
-- stage: Build
-  jobs:
-  - template: jobs/build-module.yml
+- template: jobs/build-module.yml
 
 # - template: jobs/android.yml
 #   parameters:
@@ -112,11 +110,15 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              artifactName: 'NuGet'
+              downloadPath: '$(System.ArtifactsDirectory)'
           - task: NuGetCommand@2
             displayName: 'NuGet push'
             inputs:
                 command: push
-                packagesToPush: '**/*.nupkg'
+                packagesToPush: '$(System.ArtifactsDirectory)/**/*.nupkg'
                 nuGetFeedType: external
                 publishFeedCredentials: 'DanSiegel-MyGet'
   - deployment: nuget
@@ -126,10 +128,14 @@ stages:
       runOnce:
         deploy:
           steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              artifactName: 'NuGet'
+              downloadPath: '$(System.ArtifactsDirectory)'
           - task: NuGetCommand@2
             displayName: 'NuGet push'
             inputs:
                 command: push
-                packagesToPush: '**/*.nupkg;!**/*.symbols.nupkg;!**/*-ci*'
+                packagesToPush: '$(System.ArtifactsDirectory)/**/*.nupkg;!$(System.ArtifactsDirectory)/**/*.symbols.nupkg;!$(System.ArtifactsDirectory)/**/*-ci*'
                 nuGetFeedType: external
                 publishFeedCredentials: 'NuGet'
