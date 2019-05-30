@@ -16,7 +16,12 @@ using ReactiveUI;
 
 namespace AP.AzureADAuth
 {
-    public class AzureADAuthModule : IModule
+    public class AzureADAuthModule : AzureADAuthModule<LoginPage>
+    {
+    }
+
+    public class AzureADAuthModule<TView> : IModule
+        where TView : Xamarin.Forms.ContentPage
     {
         private IAuthenticationService _authenticationService;
         private IEventAggregator _eventAggregator;
@@ -79,7 +84,7 @@ namespace AP.AzureADAuth
             }
 
             containerRegistry.Register<IAuthenticationService, AuthenticationService>();
-            containerRegistry.RegisterForNavigation<LoginPage, LoginPageViewModel>("login");
+            containerRegistry.RegisterForNavigation<TView, LoginPageViewModel>("login");
         }
 
         private IPublicClientApplication CreateAADClient()

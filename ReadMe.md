@@ -41,3 +41,31 @@ public class AuthOptions : IAuthOptions
     public bool IsB2C => true;
 }
 ```
+
+## Customization
+
+The Login Page is extremely customizable, and can be swapped out completely for your own custom Page.
+
+### Logo
+
+To swap out the logo shown on the Login Page, simply provide an embedded resource named Logo.png in the same project as your PrismApplication.
+
+### Colors
+
+The Login Page uses a special Markup Extension that will attempt to provide a named color from the Application Resources. This will work whether the color has the `Color` suffix or not.
+
+- Accent | AccentColor
+- NavigationText | NavigationTextColor
+
+### LoginPage
+
+The AzureADAuthModule is provided with and without a Generic ContentPage parameter. If you want to provide your own custom LoginPage there are two properties to be aware of:
+
+- LoginCommand
+- IsBusy
+
+As you might imagine the IsBusy property will be true whenever the LoginCommand is executing. You can bind to either of these two properties and simply register the module as follows:
+
+```cs
+moduleCatalog.AddModule<AzureADAuthModule<MyCustomLoginPage>>();
+```
