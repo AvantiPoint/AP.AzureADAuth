@@ -4,18 +4,18 @@ namespace AP.AzureADAuth.Services
 {
     internal class UserDefinedConfiguration : IAuthConfiguration
     {
-        private IAuthOptions _options { get; }
+        private IAuthOptions Options { get; }
 
         public UserDefinedConfiguration(IAuthOptions options)
         {
-            _options = options;
+            Options = options;
         }
 
-        public string Authority => $"https://login.microsoftonline.com/tfp/{_options.Tenant.GetTenantName()}/{Policy}";
-        public string Policy => _options.Policy;
-        public string[] Scopes => _options.Scopes;
-        public string ClientId => _options.ClientId;
-        public string RedirectUri => $"msal{_options.ClientId}://auth";
-        public LogLevel? LogLevel => _options.LogLevel;
+        public string Authority => $"https://login.microsoftonline.com/tfp/{Options.Tenant.GetTenantName()}/{Policy}";
+        public string Policy => Options.Policy;
+        public string[] Scopes => Options.Scopes;
+        public string ClientId => Options.ClientId;
+        public string RedirectUri => $"msal{Options.ClientId}://auth";
+        public LogLevel? LogLevel => Options.LogLevel;
     }
 }
