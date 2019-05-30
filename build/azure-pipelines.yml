@@ -101,7 +101,7 @@ stages:
 #     backendUri: '$(BackendUri)'
 
 - stage: Deploy
-  displayName: Deploy to MyGet.org
+  displayName: Deploy Artifacts
   condition: and(succeeded(), eq(variables['system.pullrequest.isfork'], false))
   jobs:
   - deployment: myget
