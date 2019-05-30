@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.24">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;Xamarin.iOS10;MonoAndroid90;uap10.0.16299</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;Xamarin.iOS10;MonoAndroid81;uap10.0.16299</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Description>Prism Forms Module for adding Authentication with Azure Active Directory or Azure Active Directory B2C.</Description>
     <NeutralLanguage>EN</NeutralLanguage>
@@ -17,8 +17,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Identity.Client" Version="3.0.8" />
     <PackageReference Include="ReactiveUI" Version="9.13.1" />
-    <PackageReference Include="Prism.Forms" Version="7.2.0.1038-pre" />
-    <PackageReference Include="Prism.Plugin.Logging.Abstractions" Version="1.4.0.316-pre" />
+    <PackageReference Include="Prism.Forms" Version="7.2.0.1233-pre" />
+    <PackageReference Include="Prism.Plugin.Logging.Abstractions" Version="1.4.0.342-pre" />
     <PackageReference Include="Xamarin.Forms" Version="3.6.0.344457" PrivateAssets="all" />
   </ItemGroup>
 
@@ -35,9 +35,6 @@
     <None Remove="Images\Logo.png" />
     <Compile Update="i18n\Resources.Designer.cs" DesignTime="True" AutoGen="True" DependentUpon="Resources.resx" />
     <EmbeddedResource Update="i18n\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
-    <EmbeddedResource Update="Views\LoginPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

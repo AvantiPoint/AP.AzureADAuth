@@ -8,7 +8,7 @@ using Prism.Navigation;
 
 namespace ShellApp.ViewModels
 {
-    public class MainPageViewModel : BindableBase, INavigatingAware
+    public class MainPageViewModel : BindableBase, IInitialize
     {
         private string _jwtPayload;
         public string JwtPayload
@@ -17,7 +17,7 @@ namespace ShellApp.ViewModels
             set => SetProperty(ref _jwtPayload, value);
         }
 
-        public void OnNavigatingTo(INavigationParameters parameters)
+        public void Initialize(INavigationParameters parameters)
         {
             var result = parameters.GetValue<AuthenticationResult>("authResult");
             var jwt = result.AccessToken.Split('.')[1];
