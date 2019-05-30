@@ -117,10 +117,11 @@ stages:
                 command: push
                 packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg'
                 nuGetFeedType: external
-                publishFeedCredentials: 'DanSiegel-MyGet'
+                publishFeedCredentials: 'AvaintPoint-MyGet'
   - deployment: nuget
     displayName: NuGet.org
     environment: NuGet
+    condition: and(succeeded(),or(eq(variables['IS_PREVIEW'], true), eq(variables['IS_RELEASE'], true)))
     strategy:
       runOnce:
         deploy:
