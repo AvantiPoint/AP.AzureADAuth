@@ -9,11 +9,12 @@ using Microsoft.Identity.Client;
 using Prism.AppModel;
 using Prism.Events;
 using Prism.Logging;
+using Prism.Navigation;
 using ReactiveUI;
 
 namespace AP.AzureADAuth.ViewModels
 {
-    internal class LoginPageViewModel : ReactiveObject, IPageLifecycleAware
+    internal class LoginPageViewModel : ReactiveObject, IPageLifecycleAware, IDestructible
     {
         private IAuthenticationService _authenticationService { get; }
         private IEventAggregator _eventAggregator { get; }
@@ -32,10 +33,10 @@ namespace AP.AzureADAuth.ViewModels
                 .ToProperty(this, x => x.IsBusy, false);
         }
 
-        private ObservableAsPropertyHelper<bool> _isBusyHelper { get; }
+        private ObservableAsPropertyHelper<bool> _isBusyHelper;
         public bool IsBusy => _isBusyHelper?.Value ?? false;
 
-        public ReactiveCommand<Unit, Unit> LoginCommand { get; }
+        public ReactiveCommand<Unit, Unit> LoginCommand { get; set; }
 
         public async void OnAppearing()
         {
@@ -45,6 +46,14 @@ namespace AP.AzureADAuth.ViewModels
         }
 
         public void OnDisappearing() { }
+
+        public void Destroy()
+        {
+            _isBusyHelper.Dispose();
+            _isBusyHelper = null;
+            LoginCommand.Dispose();
+            LoginCommand = null;
+        }
 
         private async Task OnLoginCommandExecuted()
         {
