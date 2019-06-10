@@ -19,6 +19,7 @@ variables:
   value: Release
 - name: TargetSolution
   value: '**/*.sln'
+- group: CodeSigning
 
 stages:
 - template: jobs/build-module.yml
