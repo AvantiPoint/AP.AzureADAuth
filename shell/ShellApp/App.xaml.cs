@@ -33,6 +33,11 @@ namespace ShellApp
         public App() : base() { }
         public App(IPlatformInitializer initializer) : base(initializer) { }
 
+        protected override Rules CreateContainerRules()
+        {
+            return base.CreateContainerRules().WithoutFastExpressionCompiler();
+        }
+
         protected override async void OnInitialized()
         {
             InitializeComponent();
