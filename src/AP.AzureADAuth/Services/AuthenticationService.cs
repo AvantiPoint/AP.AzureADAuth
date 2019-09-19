@@ -43,8 +43,14 @@ namespace AP.AzureADAuth.Services
 #if __ANDROID__
                 builder = builder.WithParentActivityOrWindow(CurrentActivity.Activity);
 #endif
-                result = await builder.WithUseEmbeddedWebView(true)
-                                      .ExecuteAsync();
+                try{
+                    result = await builder.WithUseEmbeddedWebView(true)
+                                          .ExecuteAsync();
+                }
+                catch(Exception ex)
+                {
+
+                }
             }
 
             return result;
