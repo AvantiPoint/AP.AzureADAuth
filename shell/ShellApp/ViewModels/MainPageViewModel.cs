@@ -17,12 +17,21 @@ namespace ShellApp.ViewModels
             set => SetProperty(ref _jwtPayload, value);
         }
 
+
+
         public void Initialize(INavigationParameters parameters)
         {
-            var result = parameters.GetValue<AuthenticationResult>("authResult");
-            var jwt = result.AccessToken.Split('.')[1];
-            var json = Encoding.UTF8.GetString(Convert.FromBase64String(jwt));
-            JwtPayload = JObject.Parse(json).ToString(Newtonsoft.Json.Formatting.Indented);
+            try
+            {
+                var result = parameters.GetValue<AuthenticationResult>("authResult");
+                var jwt = result.AccessToken.Split('.')[1];
+                //var json = Encoding.UTF8.GetString(Convert.FromBase64String(jwt));
+                //JwtPayload = JObject.Parse(json).ToString(Newtonsoft.Json.Formatting.Indented);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
     }
 }

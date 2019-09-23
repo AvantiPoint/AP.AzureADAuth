@@ -10,6 +10,7 @@ using Prism;
 using Prism.Ioc;
 using Microsoft.Identity.Client;
 using Plugin.CurrentActivity;
+using Android.Content;
 
 namespace ShellApp.Droid
 {
@@ -31,6 +32,12 @@ namespace ShellApp.Droid
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App(this));
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(requestCode, resultCode, data);
         }
     }
 }

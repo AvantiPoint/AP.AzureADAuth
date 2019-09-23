@@ -37,8 +37,8 @@ namespace AP.AzureADAuth.Services
             if (result is null)
             {
                 var accounts = await _client.GetAccountsAsync();
-                var builder = _client.AcquireTokenInteractive(_configuration.Scopes)
-                                     .WithAccount(accounts.FirstOrDefault());
+                var builder = _client.AcquireTokenInteractive(_configuration.Scopes);
+                                     //.WithAccount(accounts.FirstOrDefault());
 
 #if __ANDROID__
                 builder = builder.WithParentActivityOrWindow(CurrentActivity.Activity);
@@ -46,6 +46,8 @@ namespace AP.AzureADAuth.Services
                 try{
                     result = await builder.WithUseEmbeddedWebView(true)
                                           .ExecuteAsync();
+
+                    //result = await builder.ExecuteAsync();
                 }
                 catch(Exception ex)
                 {
