@@ -26,7 +26,7 @@ namespace ShellApp.Droid
         {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
-
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this, savedInstanceState);
 
             base.OnCreate(savedInstanceState);
@@ -38,6 +38,18 @@ namespace ShellApp.Droid
         {
             base.OnActivityResult(requestCode, resultCode, data);
             AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(requestCode, resultCode, data);
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                var exception = (Exception)e.ExceptionObject;
+                Console.WriteLine(exception);
+            }
+            catch (Exception ex)
+            {
+            }
         }
     }
 }

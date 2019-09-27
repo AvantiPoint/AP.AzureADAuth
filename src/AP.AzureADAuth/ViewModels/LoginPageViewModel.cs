@@ -51,8 +51,8 @@ namespace AP.AzureADAuth.ViewModels
         {
             _isBusyHelper.Dispose();
             _isBusyHelper = null;
-            LoginCommand.Dispose();
-            LoginCommand = null;
+            //LoginCommand.Dispose();
+            //LoginCommand = null;
         }
 
         private async Task OnLoginCommandExecuted()
