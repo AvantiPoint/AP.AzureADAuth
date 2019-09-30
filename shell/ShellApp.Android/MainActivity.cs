@@ -42,14 +42,8 @@ namespace ShellApp.Droid
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            try
-            {
-                var exception = (Exception)e.ExceptionObject;
-                Console.WriteLine(exception);
-            }
-            catch (Exception ex)
-            {
-            }
+            var exception = (Exception)e.ExceptionObject;
+            Console.WriteLine(exception);
         }
     }
 }
