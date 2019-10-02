@@ -10,5 +10,4 @@
            Text="{Binding JwtPayload}" />
   </ScrollView>
   
-
 </ContentPage>
