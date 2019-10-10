@@ -41,13 +41,13 @@ namespace AP.AzureADAuth.ViewModels
         public async void OnAppearing()
         {
             _logger.TrackEvent("Login Page");
-            var canExecuteCommand = await LoginCommand.CanExecute.FirstAsync();
 
-            if (canExecuteCommand)
+            if (await LoginCommand.CanExecute.FirstAsync())
             {
                 await LoginCommand.Execute();
             }
         }
+
         public void OnDisappearing() { }
 
         public void Destroy()

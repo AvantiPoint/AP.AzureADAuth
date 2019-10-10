@@ -9,5 +9,5 @@
            LineBreakMode="WordWrap"
            Text="{Binding JwtPayload}" />
   </ScrollView>
-  
+
 </ContentPage>
