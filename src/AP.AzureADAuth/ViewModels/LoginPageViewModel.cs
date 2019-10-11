@@ -42,7 +42,10 @@ namespace AP.AzureADAuth.ViewModels
         {
             _logger.TrackEvent("Login Page");
 
-            await LoginCommand.Execute();
+            if (await LoginCommand.CanExecute.FirstAsync())
+            {
+                await LoginCommand.Execute();
+            }
         }
 
         public void OnDisappearing() { }
@@ -51,8 +54,6 @@ namespace AP.AzureADAuth.ViewModels
         {
             _isBusyHelper.Dispose();
             _isBusyHelper = null;
-            LoginCommand.Dispose();
-            LoginCommand = null;
         }
 
         private async Task OnLoginCommandExecuted()

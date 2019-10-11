@@ -37,8 +37,7 @@ namespace AP.AzureADAuth.Services
             if (result is null)
             {
                 var accounts = await _client.GetAccountsAsync();
-                var builder = _client.AcquireTokenInteractive(_configuration.Scopes)
-                                     .WithAccount(accounts.FirstOrDefault());
+                var builder = _client.AcquireTokenInteractive(_configuration.Scopes);
 
 #if __ANDROID__
                 builder = builder.WithParentActivityOrWindow(CurrentActivity.Activity);

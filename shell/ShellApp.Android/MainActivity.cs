@@ -10,6 +10,7 @@ using Prism;
 using Prism.Ioc;
 using Microsoft.Identity.Client;
 using Plugin.CurrentActivity;
+using Android.Content;
 
 namespace ShellApp.Droid
 {
@@ -25,12 +26,24 @@ namespace ShellApp.Droid
         {
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
-
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this, savedInstanceState);
 
             base.OnCreate(savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App(this));
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+            AuthenticationContinuationHelper.SetAuthenticationContinuationEventArgs(requestCode, resultCode, data);
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exception = (Exception)e.ExceptionObject;
+            Console.WriteLine(exception);
         }
     }
 }
