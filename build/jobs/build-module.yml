@@ -33,7 +33,7 @@ stages:
       inputs:
         platform: 'Any CPU'
         configuration: 'Release'
-        msbuildArguments: '/p:DebugType=portable'
+        msbuildArguments: '/p:DebugType=portable /p:XamarinAndroidSupportSkipVerifyVersions=true'
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet test'
