@@ -2,9 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
-#if __ANDROID__
-using Plugin.CurrentActivity;
-#endif
 
 namespace AP.AzureADAuth.Services
 {
@@ -13,23 +10,11 @@ namespace AP.AzureADAuth.Services
         IAuthConfiguration _configuration { get; }
         IPublicClientApplication _client { get; }
 
-#if __ANDROID__
-        ICurrentActivity CurrentActivity { get; }
-
-        public AuthenticationService(Func<IPublicClientApplication> pcaFactory, IAuthConfiguration configuration,
-            ICurrentActivity currentActivity)
+        public AuthenticationService(IPublicClientApplication pca, IAuthConfiguration configuration)
         {
-            _client = pcaFactory();
-            _configuration = configuration;
-            CurrentActivity = currentActivity;
-        }
-#else
-        public AuthenticationService(Func<IPublicClientApplication> pcaFactory, IAuthConfiguration configuration)
-        {
-            _client = pcaFactory();
+            _client = pca;
             _configuration = configuration;
         }
-#endif
 
         public async Task<AuthenticationResult> LoginAsync()
         {
@@ -38,10 +23,10 @@ namespace AP.AzureADAuth.Services
             {
                 var accounts = await _client.GetAccountsAsync();
                 var builder = _client.AcquireTokenInteractive(_configuration.Scopes);
-
-#if __ANDROID__
-                builder = builder.WithParentActivityOrWindow(CurrentActivity.Activity);
-#endif
+                if(accounts.Any())
+                {
+                    builder = builder.WithAccount(accounts.First());
+                }
                 result = await builder.WithUseEmbeddedWebView(true)
                                       .ExecuteAsync();
             }

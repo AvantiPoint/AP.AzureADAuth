@@ -12,14 +12,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Mobile.BuildTools" Version="1.4.0.638">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Prism.DryIoc.Forms" Version="7.2.0.1422" />
+    <PackageReference Include="Prism.Forms.Extended" Version="7.2.0.898" />
     <PackageReference Include="Prism.Plugin.Logging.AppCenter" Version="7.2.0.700" />
     <PackageReference Include="Prism.Plugin.Logging.Syslog" Version="7.2.0.700" />
-    <PackageReference Include="Xamarin.Forms" Version="4.3.0.991211" />
+    <PackageReference Include="Xamarin.Forms" Version="4.5.0.282-pre4" />
   </ItemGroup>
 
   <ItemGroup>

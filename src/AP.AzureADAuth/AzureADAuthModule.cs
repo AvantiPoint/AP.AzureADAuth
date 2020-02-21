@@ -18,6 +18,10 @@ namespace AP.AzureADAuth
 {
     public class AzureADAuthModule : AzureADAuthModule<LoginPage>
     {
+        public AzureADAuthModule(IEventAggregator eventAggregator)
+            : base(eventAggregator)
+        {
+        }
     }
 
     public class AzureADAuthModule<TView> : IModule
@@ -25,11 +29,10 @@ namespace AP.AzureADAuth
     {
         private IAuthenticationService _authenticationService;
         private IEventAggregator _eventAggregator;
-        private ILogger _logger;
-        private IContainerProvider _containerProvider;
 
-        public AzureADAuthModule()
+        public AzureADAuthModule(IEventAggregator eventAggregator)
         {
+            _eventAggregator = eventAggregator;
             LogoutCommand = ReactiveCommand.CreateFromTask(OnLogoutCommandExecuted);
             RefreshTokenCommand = ReactiveCommand.CreateFromTask(OnRefreshTokenCommandExecuted);
         }
@@ -40,9 +43,7 @@ namespace AP.AzureADAuth
         public void OnInitialized(IContainerProvider containerProvider)
         {
             _authenticationService = containerProvider.Resolve<IAuthenticationService>();
-            _containerProvider = containerProvider;
             _eventAggregator = containerProvider.Resolve<IEventAggregator>();
-            _logger = containerProvider.Resolve<ILogger>();
 
             _eventAggregator.GetEvent<LogoutRequestedEvent>().Subscribe(OnLogoutRequestedEventPublished);
             _eventAggregator.GetEvent<RefreshTokenRequestedEvent>().Subscribe(OnRefreshTokenRequestedEventPublished);
@@ -60,22 +61,22 @@ namespace AP.AzureADAuth
                 containerRegistry.Register<IAuthConfiguration, UserDefinedConfiguration>();
                 if(((IContainerProvider)containerRegistry).Resolve<IAuthOptions>().IsB2C)
                 {
-                    containerRegistry.RegisterInstance<Func<IPublicClientApplication>>(CreateB2CClient);
+                    containerRegistry.RegisterDelegate<IPublicClientApplication>(CreateB2CClient);
                 }
                 else
                 {
-                    containerRegistry.RegisterInstance<Func<IPublicClientApplication>>(CreateAADClient);
+                    containerRegistry.RegisterDelegate<IPublicClientApplication>(CreateAADClient);
                 }
             }
             else if(containerRegistry.IsRegistered<IB2COptions>())
             {
                 containerRegistry.Register<IAuthConfiguration, DefaultB2CConfiguration>();
-                containerRegistry.RegisterInstance<Func<IPublicClientApplication>>(CreateB2CClient);
+                containerRegistry.RegisterDelegate<IPublicClientApplication>(CreateB2CClient);
             }
             else if(containerRegistry.IsRegistered<IAADOptions>())
             {
                 containerRegistry.Register<IAuthConfiguration, DefaultAADConfiguration>();
-                containerRegistry.RegisterInstance<Func<IPublicClientApplication>>(CreateAADClient);
+                containerRegistry.RegisterDelegate<IPublicClientApplication>(CreateAADClient);
             }
             else
             {
@@ -87,38 +88,52 @@ namespace AP.AzureADAuth
             containerRegistry.RegisterForNavigation<TView, LoginPageViewModel>("login");
         }
 
-        private IPublicClientApplication CreateAADClient()
+        private static IPublicClientApplication CreateAADClient(IContainerProvider containerProvider)
         {
-            if (_containerProvider is null) return null;
+            if (containerProvider is null) return null;
 
-            var configuration = _containerProvider.Resolve<IAuthConfiguration>();
+            var configuration = containerProvider.Resolve<IAuthConfiguration>();
 
-            return CreateBaseBuilder(configuration)
+            return CreateBaseBuilder(configuration, containerProvider)
                     .Build();
         }
 
-        private IPublicClientApplication CreateB2CClient()
+        private static IPublicClientApplication CreateB2CClient(IContainerProvider containerProvider)
         {
-            if (_containerProvider is null) return null;
+            if (containerProvider is null) return null;
 
-            var configuration = _containerProvider.Resolve<IAuthConfiguration>();
+            var configuration = containerProvider.Resolve<IAuthConfiguration>();
 
-            return CreateBaseBuilder(configuration)
-                    .WithB2CAuthority(configuration.Authority)
+            return CreateBaseBuilder(configuration, containerProvider)
+                    //.WithB2CAuthority(configuration.Authority)
                     .Build();
         }
 
-        private PublicClientApplicationBuilder CreateBaseBuilder(IAuthConfiguration configuration)
+        private static PublicClientApplicationBuilder CreateBaseBuilder(IAuthConfiguration configuration, IContainerProvider containerProvider)
         {
-            return PublicClientApplicationBuilder.Create(configuration.ClientId)
-                                                 .WithRedirectUri(configuration.RedirectUri)
+            if(_logger is null)
+            {
+                _logger = containerProvider.Resolve<ILogger>();
+            }
+
+            var redirectUri = string.IsNullOrEmpty(configuration.RedirectUri) ? $"msal{configuration.ClientId}://auth" : configuration.RedirectUri;
+            var builder = PublicClientApplicationBuilder.Create(configuration.ClientId)
+                                                 .WithRedirectUri(redirectUri);
 #if __IOS__
-                                                 .WithIosKeychainSecurityGroup(Xamarin.Essentials.AppInfo.PackageName)
+            builder = builder.WithIosKeychainSecurityGroup(Xamarin.Essentials.AppInfo.PackageName);
+#elif MONOANDROID
+            builder = builder.WithParentActivityOrWindow(() => GetParentActivity(containerProvider));
 #endif
-                                                 .WithLogging(AADLog, configuration.LogLevel);
+            return builder.WithLogging(AADLog, configuration.LogLevel);
         }
 
-        private void AADLog(LogLevel level, string message, bool containsPii)
+#if MONOANDROID
+        private static Android.App.Activity GetParentActivity(IContainerProvider containerProvider) =>
+            containerProvider.Resolve<Plugin.CurrentActivity.ICurrentActivity>().Activity;
+#endif
+
+        private static ILogger _logger;
+        private static void AADLog(LogLevel level, string message, bool containsPii)
         {
             _logger.Log(message, new Dictionary<string, string> { { "level", $"{level}" }, { "containsPii", $"{containsPii}" } });
         }

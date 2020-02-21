@@ -1,17 +1,15 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using AP.AzureADAuth;
 using AP.AzureADAuth.Events;
 using AP.AzureADAuth.Services;
-using DryIoc;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Identity.Client;
-using Newtonsoft.Json;
 using Prism;
-using Prism.DryIoc;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Logging;
@@ -25,18 +23,14 @@ using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
 
+[assembly: InternalsVisibleTo("ShellApp.Android")]
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
 namespace ShellApp
 {
-    public partial class App
+    public partial class App : PrismApplication
     {
         public App() : base() { }
         public App(IPlatformInitializer initializer) : base(initializer) { }
-
-        protected override Rules CreateContainerRules()
-        {
-            return base.CreateContainerRules().WithoutFastExpressionCompiler();
-        }
 
         protected override async void OnInitialized()
         {
@@ -74,11 +68,9 @@ namespace ShellApp
             containerRegistry.RegisterSingleton<IB2COptions, B2COptions>();
 #if DEBUG
             containerRegistry.RegisterSingleton<ISyslogOptions, SyslogOptions>();
-            containerRegistry.GetContainer().RegisterMany<SyslogLogger>(Reuse.Singleton,
-                    serviceTypeCondition: t => typeof(SyslogLogger).ImplementsServiceType(t));
+            containerRegistry.RegisterManySingleton<SyslogLogger>();
 #else
-            containerRegistry.GetContainer().RegisterMany<AppCenterLogger>(Reuse.Singleton,
-                    serviceTypeCondition: t => typeof(AppCenterLogger).ImplementsServiceType(t));
+            containerRegistry.RegisterManySingleton<AppCenterLogger>();
 #endif
 
             containerRegistry.RegisterForNavigation<NavigationPage>();
@@ -91,33 +83,13 @@ namespace ShellApp
             moduleCatalog.AddModule<AzureADAuthModule>();
         }
 
-        protected override void InitializeModules()
+        protected override void LoadModuleCompleted(IModuleInfo moduleInfo, Exception error, bool isHandled)
         {
-            var manager = Container.Resolve<IModuleManager>();
-            manager.LoadModuleCompleted += OnLoadModuleCompleted;
-            try
-            {
-                manager.Run();
-            }
-            catch (Exception ex)
-            {
-                Container.Resolve<ILogger>().Report(ex);
-                Debugger.Break();
-            }
-        }
-
-        protected virtual void OnLoadModuleCompleted(object sender, LoadModuleCompletedEventArgs e)
-        {
-            var logger = Container.Resolve<ILogger>();
-            if(e.Error is null)
-            {
-                logger.Debug($"{e.ModuleInfo.ModuleName} has loaded successfully");
-            }
-            else
+            if(error != null)
             {
                 Debugger.Break();
-                logger.Debug($"{e.ModuleInfo.ModuleName} has encountered an error while loading...");
-                logger.Report(e.Error);
+                Logger.Debug($"{moduleInfo.ModuleName} has encountered an error while loading...");
+                Logger.Report(error);
             }
         }
 

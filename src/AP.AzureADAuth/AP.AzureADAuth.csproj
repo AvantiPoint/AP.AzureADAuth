@@ -1,7 +1,8 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;Xamarin.iOS10;MonoAndroid81;uap10.0.16299</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;Xamarin.iOS10;MonoAndroid90;MonoAndroid10.0</TargetFrameworks>
+    <TargetFrameworks Condition=" '$(OS)' == 'Windows_NT' ">$(TargetFrameworks);uap10.0.16299</TargetFrameworks>
     <IsPackable>true</IsPackable>
     <Description>Prism Forms Module for adding Authentication with Azure Active Directory or Azure Active Directory B2C.</Description>
     <NeutralLanguage>EN</NeutralLanguage>
@@ -20,13 +21,13 @@
     <PackageReference Include="Microsoft.Identity.Client" Version="4.8.2" />
     <PackageReference Include="ReactiveUI" Version="11.1.23" />
     <PackageReference Include="Prism.Forms" Version="7.2.0.1422" />
+    <PackageReference Include="Prism.Container.Extensions" Version="7.2.0.898" />
     <PackageReference Include="Prism.Plugin.Logging.Abstractions" Version="7.2.0.700" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.3.1" />
-    <PackageReference Include="Xamarin.Forms" Version="4.3.0.991211" PrivateAssets="all" />
+    <PackageReference Include="Xamarin.Forms" Version="4.5.0.282-pre4" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('Xamarin.iOS')) ">
-    <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.4.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('MonoAndroid')) ">
