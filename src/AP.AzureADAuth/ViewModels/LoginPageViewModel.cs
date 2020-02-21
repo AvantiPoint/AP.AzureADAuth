@@ -84,6 +84,9 @@ namespace AP.AzureADAuth.ViewModels
                     }
                 }
 
+#if DEBUG
+                System.Diagnostics.Debugger.Break();
+#endif
                 _logger.Report(ex, data);
             }
         }
