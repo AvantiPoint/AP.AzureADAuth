@@ -2,12 +2,24 @@
 
 The Azure Active Directory Auth Module is a Prism Module for Xamarin Forms projects. This module will enable your application to easily add either Azure Active Directory or Azure Active Directory B2C authentication to your applicaiton by installing this module and providing your own instance of IAuthOptions.
 
-This module will intelligently contruct the Microsoft Identity Client allowing you to specify a bare minimum of configuration information. You can easily configure your app to use Azure Active Directory B2C by implementing and registering IB2COptions. This will assume a default scope like `https://contoso.onmicrosoft.com/mobile/read` with a Policy of `B2C_1_SUSI`. 
+## Using the Module
+
+This module can be installed via NuGet. It has a dependency on using the [Prism.Container.Extensions](https://github.com/dansiegel/Prism.Container.Extensions). It's recommended that you do not use Prism.Unity.Forms or Prism.DryIoc.Forms but rather that you use the Extensions package for the container you want with Prism.Forms.Extended. Alternatively you can use the extensions package with Prism.Forms. To do that you would need to modify your PrismApplication to inherit from PrismApplicationBase and implement `CreateContainerExtension` as follows:
+
+```cs
+protected override IContainerExtension CreateContainerExtension() => PrismContainerExtension.Current;
+```
+
+> NOTE: If using Prism.Forms.Extended, the Container is automatically picked up and you do not need to modify anything at all from your existing Prism Application.
+
+## Configuring The Module
+
+This module will intelligently contruct the Microsoft Identity Client allowing you to specify a bare minimum of configuration information. You can easily configure your app to use Azure Active Directory B2C by implementing and registering IB2COptions. This will assume a default scope like `https://contoso.onmicrosoft.com/mobile/read` with a Policy of `B2C_1_SUSI`.
 
 ```cs
 public class B2COptions : IB2COptions
 {
-    // This could be the Tenant Name (i.e. Contoso) or the FQDN (i.e. contoso.onmicrosoft.com)
+    // This should be the Tenant Name (i.e. contoso) not the FQDN (i.e. contoso.onmicrosoft.com)
     public string Tenant => Secrets.TenantName;
     public string ClientId => Secrets.ClientId;
     public LogLevel? LogLevel => Microsoft.Identity.Client.LogLevel.Verbose;
@@ -32,11 +44,9 @@ For scenarios where you require more fine grain control you can implement IAuthO
 public class AuthOptions : IAuthOptions
 {
     public LogLevel? LogLevel { get; }
-    public string Tenant => Secrets.TenantName.Contains(".")
-        ? Secrets.TenantName.ToLower()
-        : $"{Secrets.TenantName.ToLower()}.onmicrosoft.com";
+    public string Tenant => Secrets.TenantName;
     public string Policy => "B2C_1_SUSI";
-    public string[] Scopes => new[] { $"https://{Tenant}/mobile/read" };
+    public string[] Scopes => new[] { $"https://{Tenant}.onmicrosoft.com/mobile/read" };
     public string ClientId => Secrets.ClientId;
     public bool IsB2C => true;
 }

@@ -105,7 +105,7 @@
       <Name>AP.AzureADAuth</Name>
     </ProjectReference>
     <ProjectReference Include="..\ShellApp\ShellApp.csproj">
-      <Project>{74799366-0980-4850-998E-478CB4C5EC8F}</Project>
+      <Project>{DC3F6B22-0893-42E1-9EBD-3DF08931740E}</Project>
       <Name>ShellApp</Name>
     </ProjectReference>
   </ItemGroup>

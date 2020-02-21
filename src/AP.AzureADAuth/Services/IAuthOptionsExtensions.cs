@@ -14,7 +14,7 @@
                 tenant = $"{tenant}.onmicrosoft.com";
             }
 
-            return tenant;
+            return tenant.ToLower();
         }
 
         internal static string[] GetScopes(this IAuthOptions options)
