@@ -7,16 +7,15 @@ stages:
   jobs:
   - job:
     pool:
-      vmImage: windows-2019
+      vmImage: windows-latest
       demands:
       - MSBuild
     steps:
-    - powershell: |
-       $sdkUri = 'https://go.microsoft.com/fwlink/p/?linkid=864422'
-       Invoke-WebRequest -Uri $sdkUri -OutFile ./winsdksetup.exe
-       ./winsdksetup.exe /features + /quiet /ceip off
-
-      displayName: Install UWP 16299 SDK
+    # - powershell: |
+    #    $sdkUri = 'https://go.microsoft.com/fwlink/p/?linkid=864422'
+    #    Invoke-WebRequest -Uri $sdkUri -OutFile ./winsdksetup.exe
+    #    ./winsdksetup.exe /features + /quiet /ceip off
+    #   displayName: Install UWP 16299 SDK
 
     - template: ../steps/nuget-restore.yml
       parameters:

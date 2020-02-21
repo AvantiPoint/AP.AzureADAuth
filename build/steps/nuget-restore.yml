@@ -2,10 +2,10 @@ parameters:
   solution: '**/*.sln'
 
 steps:
-- task: NuGetToolInstaller@0
-  displayName: Use NuGet 4.9.4
+- task: NuGetToolInstaller@1
+  displayName: Use latest NuGet
   inputs:
-    versionSpec: 4.9.4
+    checkLatest: true
 
 - task: NuGetCommand@2
   displayName: 'NuGet restore'
