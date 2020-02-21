@@ -16,13 +16,26 @@ namespace AP.AzureADAuth.Xaml
 
         public ImageSource ProvideValue(IServiceProvider serviceProvider)
         {
-            (var assembly, var resourceId) = GetResource();
+            var app = Application.Current;
+
+            if(app.Resources.ContainsKey("LoginLogo"))
+            {
+                switch(app.Resources["LoginLogo"])
+                {
+                    case ImageSource imageSource:
+                        return imageSource;
+                    case string resourceName:
+                        return ImageSource.FromFile(resourceName);
+                }
+            }
+
+            (var assembly, var resourceId) = GetResource(app);
             return ImageSource.FromResource(resourceId, assembly);
         }
 
-        private (Assembly, string) GetResource()
+        private (Assembly, string) GetResource(Application app)
         {
-            var assembly = Application.Current.GetType().Assembly;
+            var assembly = app.GetType().Assembly;
             var fileName = Path.HasExtension(FileName) ? FileName : $"{FileName}.png";
             var resourceId = assembly.GetManifestResourceNames()
                 .FirstOrDefault(r => r.EndsWith(fileName, StringComparison.InvariantCultureIgnoreCase));
