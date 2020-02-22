@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms.Xaml;
+﻿using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace AP.AzureADAuth.Views
 {
@@ -8,6 +9,21 @@ namespace AP.AzureADAuth.Views
         public LoginPage()
         {
             InitializeComponent();
+
+            var app = Application.Current;
+
+            if(app != null && app.Resources.ContainsKey("LoginPageBackground"))
+            {
+                switch(app.Resources["LoginPageBackground"])
+                {
+                    case ImageSource imageSource:
+                        BackgroundImageSource = imageSource;
+                        break;
+                    case View view:
+                        backgroundContainer.Content = view;
+                        break;
+                }
+            }
         }
     }
 }

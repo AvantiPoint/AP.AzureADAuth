@@ -5,13 +5,13 @@
              xmlns:xaml="clr-namespace:AP.AzureADAuth.Xaml"
              x:Class="AP.AzureADAuth.Views.LoginPage">
   <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-
+    <ContentView x:Name="backgroundContainer" />
     <StackLayout VerticalOptions="Center"
                  HorizontalOptions="Center">
       <Image Aspect="AspectFit"
              WidthRequest="300"
              Margin="15"
-             Source="{xaml:LocalResource Logo}" />
+             Source="{xaml:LocalResource Logo, ResourceKey=LoginLogo}" />
       <Button Text="{x:Static i18n:Resources.Login}"
               Command="{Binding LoginCommand}"
               BorderColor="{xaml:Color Accent,HexString='#000000'}"

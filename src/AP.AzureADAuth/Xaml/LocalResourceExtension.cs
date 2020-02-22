@@ -14,13 +14,15 @@ namespace AP.AzureADAuth.Xaml
     {
         public string FileName { get; set; }
 
+        public string ResourceKey { get; set; }
+
         public ImageSource ProvideValue(IServiceProvider serviceProvider)
         {
             var app = Application.Current;
 
-            if(app.Resources.ContainsKey("LoginLogo"))
+            if(app.Resources.ContainsKey(ResourceKey))
             {
-                switch(app.Resources["LoginLogo"])
+                switch(app.Resources[ResourceKey])
                 {
                     case ImageSource imageSource:
                         return imageSource;

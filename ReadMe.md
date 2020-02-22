@@ -46,28 +46,33 @@ public class AuthOptions : IAuthOptions
     public LogLevel? LogLevel { get; }
     public string Tenant => Secrets.TenantName;
     public string Policy => "B2C_1_SUSI";
-    public string[] Scopes => new[] { $"https://{Tenant}.onmicrosoft.com/mobile/read" };
+    public string[] Scopes => new[] { $"https://{Secrets.TenantName}.onmicrosoft.com/mobile/read" };
     public string ClientId => Secrets.ClientId;
     public bool IsB2C => true;
 }
 ```
 
-## Customization
+## Customizing the LoginPage
 
 The Login Page is extremely customizable, and can be swapped out completely for your own custom Page.
 
 ### Logo
 
-To swap out the logo shown on the Login Page, simply provide an embedded resource named Logo.png in the same project as your PrismApplication.
+By Default the Login Page will display the AvantiPoint logo above a login button. You can replace this with your own custom logo in any of the following 3 ways:
 
-### Colors
+- Embed a file named `Logo.png` in the same assembly as your Application
+- Add a Resource to your Application named LoginLogo
+  - Add a String with the local resource name of a natively bundled image asset
+  - Add any ImageSource
+
+### Theme
 
 The Login Page uses a special Markup Extension that will attempt to provide a named color from the Application Resources. This will work whether the color has the `Color` suffix or not.
 
 - Accent | AccentColor
 - NavigationText | NavigationTextColor
 
-### LoginPage
+## Using your own LoginPage
 
 The AzureADAuthModule is provided with and without a Generic ContentPage parameter. If you want to provide your own custom LoginPage there are two properties to be aware of:
 
