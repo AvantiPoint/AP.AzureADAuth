@@ -101,8 +101,8 @@ stages:
 #     appcenterSecret: '$(iOSAppCenterSecret)'
 #     backendUri: '$(BackendUri)'
 
-- stage: Deploy
-  displayName: Deploy Artifacts
+- stage: mygetDeploy
+  displayName: MyGet Deploy
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   jobs:
   - deployment: myget
@@ -119,10 +119,14 @@ stages:
                 packagesToPush: '$(Pipeline.Workspace)/**/*.nupkg'
                 nuGetFeedType: external
                 publishFeedCredentials: 'AvaintPoint-MyGet'
+
+- stage: releaseDeploy
+  displayName: NuGet Deploy
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'),or(eq(variables['IS_PREVIEW'], true), eq(variables['IS_RELEASE'], true)))
+  jobs:
   - deployment: nuget
     displayName: NuGet.org
     environment: NuGet
-    condition: and(succeeded(),or(eq(variables['IS_PREVIEW'], true), eq(variables['IS_RELEASE'], true)))
     strategy:
       runOnce:
         deploy:
@@ -169,7 +173,7 @@ stages:
             env:
               searchDirectory: $(Pipeline.Workspace)
 
-          - task: GithubRelease@0 
+          - task: GithubRelease@0
             displayName: 'Create GitHub Release'
             inputs:
               gitHubConnection: dansiegel
