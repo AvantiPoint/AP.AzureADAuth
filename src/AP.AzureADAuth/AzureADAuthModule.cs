@@ -1,52 +1,24 @@
-using System;
 using System.Collections.Generic;
-using System.Reactive;
-using System.Threading.Tasks;
-using AP.AzureADAuth.Events;
 using AP.AzureADAuth.Services;
 using AP.AzureADAuth.ViewModels;
 using AP.AzureADAuth.Views;
 using Microsoft.Identity.Client;
-using Prism.Events;
 using Prism.Ioc;
 using Prism.Logging;
 using Prism.Modularity;
 using Prism.Services;
-using ReactiveUI;
 
 namespace AP.AzureADAuth
 {
     public class AzureADAuthModule : AzureADAuthModule<LoginPage>
     {
-        public AzureADAuthModule(IEventAggregator eventAggregator)
-            : base(eventAggregator)
-        {
-        }
     }
 
     public class AzureADAuthModule<TView> : IModule
         where TView : Xamarin.Forms.ContentPage
     {
-        private IAuthenticationService _authenticationService;
-        private IEventAggregator _eventAggregator;
-
-        public AzureADAuthModule(IEventAggregator eventAggregator)
-        {
-            _eventAggregator = eventAggregator;
-            LogoutCommand = ReactiveCommand.CreateFromTask(OnLogoutCommandExecuted);
-            RefreshTokenCommand = ReactiveCommand.CreateFromTask(OnRefreshTokenCommandExecuted);
-        }
-
-        private ReactiveCommand<Unit, Unit> LogoutCommand { get; }
-        private ReactiveCommand<Unit, Unit> RefreshTokenCommand { get; }
-
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            _authenticationService = containerProvider.Resolve<IAuthenticationService>();
-            _eventAggregator = containerProvider.Resolve<IEventAggregator>();
-
-            _eventAggregator.GetEvent<LogoutRequestedEvent>().Subscribe(OnLogoutRequestedEventPublished);
-            _eventAggregator.GetEvent<RefreshTokenRequestedEvent>().Subscribe(OnRefreshTokenRequestedEventPublished);
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
@@ -84,7 +56,7 @@ namespace AP.AzureADAuth
                 throw new ModuleInitializeException("No configuration for Azure Active Directory or Azure Active Directory B2C was found");
             }
 
-            containerRegistry.Register<IAuthenticationService, AuthenticationService>();
+            containerRegistry.RegisterManySingleton<AuthenticationService>();
             containerRegistry.RegisterForNavigation<TView, LoginPageViewModel>("login");
         }
 
@@ -136,50 +108,6 @@ namespace AP.AzureADAuth
         private static void AADLog(LogLevel level, string message, bool containsPii)
         {
             _logger.Log(message, new Dictionary<string, string> { { "level", $"{level}" }, { "containsPii", $"{containsPii}" } });
-        }
-
-        private void OnLogoutRequestedEventPublished()
-        {
-            LogoutCommand.Execute();
-        }
-
-        private void OnRefreshTokenRequestedEventPublished()
-        {
-            RefreshTokenCommand.Execute();
-        }
-
-        private async Task OnRefreshTokenCommandExecuted()
-        {
-            try
-            {
-                _logger.TrackEvent("Token Refresh Requested");
-                var result = await _authenticationService.LoginSilentAsync();
-                if(result is null)
-                {
-                    _logger.TrackEvent("Unable to Refresh Token");
-                }
-
-                _eventAggregator.GetEvent<TokenRefreshedEvent>().Publish(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.Report(ex, new Dictionary<string, string> { { "event", "Logout Requested Event" } });
-            }
-        }
-
-        private async Task OnLogoutCommandExecuted()
-        {
-            try
-            {
-                _logger.TrackEvent("Logout Requested");
-                await _authenticationService.LogoutAsync();
-                _logger.TrackEvent("User Logged Out");
-                _eventAggregator.GetEvent<UserLoggedOutEvent>().Publish();
-            }
-            catch (Exception ex)
-            {
-                _logger.Report(ex, new Dictionary<string, string> { { "event", "Logout Requested Event" } });
-            }
         }
     }
 }

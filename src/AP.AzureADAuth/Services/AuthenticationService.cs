@@ -1,20 +1,46 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reactive;
+using System.Reactive.Threading;
+using System.Reactive.Linq;
 using Microsoft.Identity.Client;
+using Prism.Events;
+using System.Reactive.Subjects;
+using AP.AzureADAuth.Events;
+using System.Collections.Generic;
+using Prism.Logging;
+using ReactiveUI;
 
 namespace AP.AzureADAuth.Services
 {
-    internal class AuthenticationService : IAuthenticationService
+    internal class AuthenticationService : IAuthenticationService, IAuthenticationHandler
     {
-        IAuthConfiguration _configuration { get; }
-        IPublicClientApplication _client { get; }
+        private IAuthConfiguration _configuration { get; }
+        private IPublicClientApplication _client { get; }
+        private IEventAggregator _eventAggregator { get; }
+        private ILogger _logger { get; }
 
-        public AuthenticationService(IPublicClientApplication pca, IAuthConfiguration configuration)
+        private Subject<string> _accessToken { get; }
+        private ReactiveCommand<Unit, Unit> LogoutCommand { get; }
+        private ReactiveCommand<Unit, Unit> RefreshTokenCommand { get; }
+
+        public AuthenticationService(IPublicClientApplication pca, IAuthConfiguration configuration, IEventAggregator eventAggregator, ILogger logger)
         {
+            _accessToken = new Subject<string>();
             _client = pca;
             _configuration = configuration;
+            _eventAggregator = eventAggregator;
+            _logger = logger;
+
+            LogoutCommand = ReactiveCommand.CreateFromTask(OnLogoutCommandExecuted);
+            RefreshTokenCommand = ReactiveCommand.CreateFromTask(OnRefreshTokenCommandExecuted);
+
+            _eventAggregator.GetEvent<LogoutRequestedEvent>().Subscribe(OnLogoutRequestedEventPublished);
+            _eventAggregator.GetEvent<RefreshTokenRequestedEvent>().Subscribe(OnRefreshTokenRequestedEventPublished);
         }
+
+        public IObservable<string> AccessToken => _accessToken;
 
         public async Task<AuthenticationResult> LoginAsync()
         {
@@ -31,6 +57,7 @@ namespace AP.AzureADAuth.Services
                                       .ExecuteAsync();
             }
 
+            _accessToken.OnNext(result?.AccessToken);
             return result;
         }
 
@@ -39,9 +66,11 @@ namespace AP.AzureADAuth.Services
             try
             {
                 var accounts = await _client.GetAccountsAsync();
-                return await _client.AcquireTokenSilent(_configuration.Scopes, accounts.FirstOrDefault())
+                var result = await _client.AcquireTokenSilent(_configuration.Scopes, accounts.FirstOrDefault())
                                     .WithForceRefresh(true)
                                     .ExecuteAsync();
+                _accessToken.OnNext(result?.AccessToken);
+                return result;
             }
             catch
             {
@@ -54,6 +83,50 @@ namespace AP.AzureADAuth.Services
             var accounts = await _client.GetAccountsAsync();
             foreach (var account in accounts)
                 await _client.RemoveAsync(account);
+        }
+
+        private void OnLogoutRequestedEventPublished()
+        {
+            LogoutCommand.Execute();
+        }
+
+        private void OnRefreshTokenRequestedEventPublished()
+        {
+            RefreshTokenCommand.Execute();
+        }
+
+        private async Task OnRefreshTokenCommandExecuted()
+        {
+            try
+            {
+                _logger.TrackEvent("Token Refresh Requested");
+                var result = await LoginSilentAsync();
+                if (result is null)
+                {
+                    _logger.TrackEvent("Unable to Refresh Token");
+                }
+
+                _eventAggregator.GetEvent<TokenRefreshedEvent>().Publish(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Report(ex, new Dictionary<string, string> { { "event", "Logout Requested Event" } });
+            }
+        }
+
+        private async Task OnLogoutCommandExecuted()
+        {
+            try
+            {
+                _logger.TrackEvent("Logout Requested");
+                await LogoutAsync();
+                _logger.TrackEvent("User Logged Out");
+                _eventAggregator.GetEvent<UserLoggedOutEvent>().Publish();
+            }
+            catch (Exception ex)
+            {
+                _logger.Report(ex, new Dictionary<string, string> { { "event", "Logout Requested Event" } });
+            }
         }
     }
 }
