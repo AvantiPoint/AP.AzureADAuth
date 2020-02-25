@@ -105,7 +105,7 @@ namespace AP.AzureADAuth
             var configuration = containerProvider.Resolve<IAuthConfiguration>();
 
             return CreateBaseBuilder(configuration, containerProvider)
-                    //.WithB2CAuthority(configuration.Authority)
+                    .WithB2CAuthority(configuration.Authority)
                     .Build();
         }
 

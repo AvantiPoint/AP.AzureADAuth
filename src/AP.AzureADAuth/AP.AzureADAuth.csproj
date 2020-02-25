@@ -14,9 +14,11 @@
     <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+
   <PropertyGroup Label="Android DesignTimeBuild error workaround">
-	<DesignTimeBuild>false</DesignTimeBuild>
+    <DesignTimeBuild>false</DesignTimeBuild>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.Identity.Client" Version="4.8.2" />
     <PackageReference Include="ReactiveUI" Version="11.1.23" />

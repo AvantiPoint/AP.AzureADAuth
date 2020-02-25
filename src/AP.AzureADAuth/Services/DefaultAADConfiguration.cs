@@ -11,7 +11,7 @@ namespace AP.AzureADAuth.Services
             _options = options;
         }
 
-        public string Authority => $"https://login.microsoftonline.com/tfp/{_options.Tenant.GetTenantName()}/{Policy}";
+        public string Authority => $"https://login.microsoftonline.com/tfp/{_options.Tenant.GetFullyQualifiedTenantName()}/{Policy}";
         public string Policy => string.Empty;
         public string[] Scopes => new[] { $"User.Read" };
         public string ClientId => _options.ClientId;

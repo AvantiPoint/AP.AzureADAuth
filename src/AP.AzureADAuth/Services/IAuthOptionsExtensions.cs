@@ -9,6 +9,16 @@
 
         internal static string GetTenantName(this string tenant)
         {
+            if (tenant.Split('.').Length > 1)
+            {
+                tenant = tenant.Split('.')[0];
+            }
+
+            return tenant.ToLower();
+        }
+
+        internal static string GetFullyQualifiedTenantName(this string tenant)
+        {
             if (tenant.Split('.').Length == 1)
             {
                 tenant = $"{tenant}.onmicrosoft.com";
@@ -21,7 +31,7 @@
         {
             if(options.Scopes is null || options.Scopes.Length == 0)
             {
-                return new[] { $"{options.Tenant.GetTenantName()}/mobile/read" };
+                return new[] { $"https://{options.Tenant.GetFullyQualifiedTenantName()}/mobile/read" };
             }
 
             return options.Scopes;
@@ -34,7 +44,7 @@
 
         internal static string GetB2CAuthority(this IAuthOptions options)
         {
-            return $"https://login.microsoftonline.com/tfp/{options.Tenant.GetTenantName()}/{options.GetPolicy()}";
+            return $"https://{options.Tenant.GetTenantName()}.b2clogin.com/tfp/{options.Tenant.GetFullyQualifiedTenantName()}/{options.GetPolicy()}";
         }
     }
 }

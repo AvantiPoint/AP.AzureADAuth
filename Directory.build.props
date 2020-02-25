@@ -31,4 +31,8 @@
     <VersionSuffix Condition=" $(IS_PREVIEW) ">pre</VersionSuffix>
     <VersionSuffix Condition=" $(IS_RELEASE) "></VersionSuffix>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <XamarinAndroidSupportSkipVerifyVersions>true</XamarinAndroidSupportSkipVerifyVersions>
+  </PropertyGroup>
 </Project>
