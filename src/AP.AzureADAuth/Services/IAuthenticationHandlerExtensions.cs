@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using System.Reactive.Linq;
+using Microsoft.Identity.Client;
 
 namespace AP.AzureADAuth.Services
 {
@@ -7,12 +7,19 @@ namespace AP.AzureADAuth.Services
     {
         public static async Task<string> GetLatestAccessToken(this IAuthenticationHandler handler)
         {
-            if(handler is IAuthenticationService authService)
+            var result = await GetLatestAuthenticationResult(handler);
+            return result?.AccessToken;
+        }
+
+        public static async Task<AuthenticationResult> GetLatestAuthenticationResult(this IAuthenticationHandler handler)
+        {
+            AuthenticationResult result = null;
+            if (handler is IAuthenticationService authService)
             {
-                await authService.LoginSilentAsync();
+                 result = await authService.LoginSilentAsync();
             }
 
-            return await handler.AccessToken;
+            return result;
         }
     }
 }

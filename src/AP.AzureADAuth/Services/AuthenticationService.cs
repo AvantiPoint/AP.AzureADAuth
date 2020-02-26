@@ -1,14 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Reactive;
-using System.Reactive.Threading;
 using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
+using AP.AzureADAuth.Events;
 using Microsoft.Identity.Client;
 using Prism.Events;
-using System.Reactive.Subjects;
-using AP.AzureADAuth.Events;
-using System.Collections.Generic;
 using Prism.Logging;
 using ReactiveUI;
 
@@ -22,12 +21,14 @@ namespace AP.AzureADAuth.Services
         private ILogger _logger { get; }
 
         private Subject<string> _accessToken { get; }
+        private Subject<AuthenticationResult> _authResult { get; }
         private ReactiveCommand<Unit, Unit> LogoutCommand { get; }
         private ReactiveCommand<Unit, Unit> RefreshTokenCommand { get; }
 
         public AuthenticationService(IPublicClientApplication pca, IAuthConfiguration configuration, IEventAggregator eventAggregator, ILogger logger)
         {
             _accessToken = new Subject<string>();
+            _authResult = new Subject<AuthenticationResult>();
             _client = pca;
             _configuration = configuration;
             _eventAggregator = eventAggregator;
@@ -41,6 +42,7 @@ namespace AP.AzureADAuth.Services
         }
 
         public IObservable<string> AccessToken => _accessToken;
+        public IObservable<AuthenticationResult> AuthenticationResult => _authResult;
 
         public async Task<AuthenticationResult> LoginAsync()
         {
@@ -57,6 +59,7 @@ namespace AP.AzureADAuth.Services
                                       .ExecuteAsync();
             }
 
+            _authResult.OnNext(result);
             _accessToken.OnNext(result?.AccessToken);
             return result;
         }
@@ -67,8 +70,10 @@ namespace AP.AzureADAuth.Services
             {
                 var accounts = await _client.GetAccountsAsync();
                 var result = await _client.AcquireTokenSilent(_configuration.Scopes, accounts.FirstOrDefault())
-                                    .WithForceRefresh(true)
+                                    //.WithForceRefresh(true)
                                     .ExecuteAsync();
+
+                _authResult.OnNext(result);
                 _accessToken.OnNext(result?.AccessToken);
                 return result;
             }
