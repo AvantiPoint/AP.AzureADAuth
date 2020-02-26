@@ -25,7 +25,7 @@
     <PackageReference Include="Prism.Forms" Version="7.2.0.1422" />
     <PackageReference Include="Prism.Container.Extensions" Version="7.2.0.898" />
     <PackageReference Include="Prism.Plugin.Logging.Abstractions" Version="7.2.0.700" />
-    <PackageReference Include="Xamarin.Forms" Version="4.5.0.282-pre4" PrivateAssets="all" />
+    <PackageReference Include="Xamarin.Forms" Version="4.5.0.356" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Condition=" $(TargetFramework.StartsWith('Xamarin.iOS')) ">
