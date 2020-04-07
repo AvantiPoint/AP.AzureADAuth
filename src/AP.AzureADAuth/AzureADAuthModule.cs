@@ -94,15 +94,10 @@ namespace AP.AzureADAuth
 #if __IOS__
             builder = builder.WithIosKeychainSecurityGroup(Xamarin.Essentials.AppInfo.PackageName);
 #elif MONOANDROID
-            builder = builder.WithParentActivityOrWindow(() => GetParentActivity(containerProvider));
+            builder = builder.WithParentActivityOrWindow(() => Xamarin.Essentials.Platform.CurrentActivity);
 #endif
             return builder.WithLogging(AADLog, configuration.LogLevel);
         }
-
-#if MONOANDROID
-        private static Android.App.Activity GetParentActivity(IContainerProvider containerProvider) =>
-            containerProvider.Resolve<Plugin.CurrentActivity.ICurrentActivity>().Activity;
-#endif
 
         private static ILogger _logger;
         private static void AADLog(LogLevel level, string message, bool containsPii)
