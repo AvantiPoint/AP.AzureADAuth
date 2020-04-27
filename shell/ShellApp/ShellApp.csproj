@@ -19,7 +19,7 @@
     </PackageReference>
     <PackageReference Include="Prism.Forms.Extended" Version="7.2.0.1054" />
     <PackageReference Include="Prism.Plugin.Logging.AppCenter" Version="7.2.0.1053" />
-    <PackageReference Include="Prism.Plugin.Logging.Syslog" Version="7.2.0.1053" />
+    <PackageReference Include="Prism.Plugin.Logging.Syslog" Version="7.2.0.1114" />
     <PackageReference Include="Xamarin.Forms" Version="4.5.0.356" />
   </ItemGroup>
 
