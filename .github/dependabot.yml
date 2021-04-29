@@ -1,0 +1,47 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "13:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: Microsoft.Identity.Client
+    versions:
+    - "> 3.0.8, < 3.1"
+  - dependency-name: ReactiveUI
+    versions:
+    - "> 9.13.1, < 10"
+  - dependency-name: Xamarin.Forms
+    versions:
+    - "> 3.6.0.344457, < 3.7"
+  - dependency-name: Microsoft.Identity.Client
+    versions:
+    - 4.25.0
+    - 4.26.0
+    - 4.27.0
+    - 4.28.0
+    - 4.28.1
+    - 4.29.0
+    - 4.30.0
+  - dependency-name: ReactiveUI
+    versions:
+    - 13.1.1
+    - 13.2.10
+    - 13.2.2
+  - dependency-name: Prism.Container.Extensions
+    versions:
+    - 8.0.48
+  - dependency-name: Prism.Forms.Extended
+    versions:
+    - 8.0.48
+  - dependency-name: Prism.DryIoc.Extensions
+    versions:
+    - 8.0.48
+  - dependency-name: Microsoft.NETCore.UniversalWindowsPlatform
+    versions:
+    - 6.2.11
+  - dependency-name: Xamarin.TestCloud.Agent
+    versions:
+    - 0.22.1
