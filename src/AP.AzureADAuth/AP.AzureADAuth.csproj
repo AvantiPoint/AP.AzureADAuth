@@ -22,7 +22,7 @@
   <ItemGroup>
     <None Include="ReadMe.txt" Pack="true" PackagePath="." />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.33.0" />
-    <PackageReference Include="ReactiveUI" Version="11.5.26" />
+    <PackageReference Include="ReactiveUI" Version="14.3.10" />
     <PackageReference Include="Prism.Forms" Version="7.2.0.1422" />
     <PackageReference Include="Prism.Container.Extensions" Version="7.2.0.1054" />
     <PackageReference Include="Prism.Plugin.Logging.Abstractions" Version="7.2.0.1421" />
