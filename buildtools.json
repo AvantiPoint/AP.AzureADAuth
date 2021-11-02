@@ -1,0 +1,44 @@
+{
+  "$schema": "https://mobilebuildtools.com/schemas/v2/buildtools.schema.json",
+  "appSettings": {
+    "ShellApp": [
+      {
+        "accessibility": "Internal",
+        "className": "Secrets",
+        "namespace": "Helpers",
+        "properties": [
+          {
+            "name": "TenantName",
+            "type": "String",
+            "defaultValue": "fabrikamb2c"
+          },
+          {
+            "name": "ClientId",
+            "type": "String",
+            "defaultValue": "e5737214-6372-472c-a85a-68e8fbe6cf3c"
+          },
+          {
+            "name": "DataScheme",
+            "type": "String",
+            "defaultValue": "msal90c0fe63-bcf2-44d5-8fb7-b8bbc0b29dc6"
+          },
+          {
+            "name": "Host",
+            "type": "String",
+            "defaultValue": "null"
+          },
+          {
+            "name": "Port",
+            "type": "Int",
+            "defaultValue": "514"
+          },
+          {
+            "name": "AppName",
+            "type": "String",
+            "defaultValue": "AzureAD-Shell"
+          }
+        ]
+      }
+    ]
+  }
+}

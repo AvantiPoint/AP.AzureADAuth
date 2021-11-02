@@ -25,7 +25,10 @@ namespace AP.AzureADAuth
         {
             if (!containerRegistry.IsRegistered<ILogger>())
             {
-                containerRegistry.RegisterSingleton<ILogger, ConsoleLoggingService>();
+                if (System.Diagnostics.Debugger.IsAttached)
+                    containerRegistry.RegisterSingleton<ILogger, ConsoleLoggingService>();
+                else
+                    containerRegistry.RegisterSingleton<ILogger, NullLoggingService>();
             }
 
             if (containerRegistry.IsRegistered<IAuthOptions>())
@@ -33,22 +36,22 @@ namespace AP.AzureADAuth
                 containerRegistry.Register<IAuthConfiguration, UserDefinedConfiguration>();
                 if(((IContainerProvider)containerRegistry).Resolve<IAuthOptions>().IsB2C)
                 {
-                    containerRegistry.RegisterDelegate<IPublicClientApplication>(CreateB2CClient);
+                    containerRegistry.Register<IPublicClientApplication>(CreateB2CClient);
                 }
                 else
                 {
-                    containerRegistry.RegisterDelegate<IPublicClientApplication>(CreateAADClient);
+                    containerRegistry.Register<IPublicClientApplication>(CreateAADClient);
                 }
             }
             else if(containerRegistry.IsRegistered<IB2COptions>())
             {
                 containerRegistry.Register<IAuthConfiguration, DefaultB2CConfiguration>();
-                containerRegistry.RegisterDelegate<IPublicClientApplication>(CreateB2CClient);
+                containerRegistry.Register<IPublicClientApplication>(CreateB2CClient);
             }
             else if(containerRegistry.IsRegistered<IAADOptions>())
             {
                 containerRegistry.Register<IAuthConfiguration, DefaultAADConfiguration>();
-                containerRegistry.RegisterDelegate<IPublicClientApplication>(CreateAADClient);
+                containerRegistry.Register<IPublicClientApplication>(CreateAADClient);
             }
             else
             {
