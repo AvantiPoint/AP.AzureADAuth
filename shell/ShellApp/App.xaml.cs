@@ -1,19 +1,15 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using AP.AzureADAuth;
 using AP.AzureADAuth.Events;
 using AP.AzureADAuth.Services;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Identity.Client;
 using Prism;
+using Prism.DryIoc;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Logging;
-using Prism.Logging.AppCenter;
 using Prism.Logging.Syslog;
 using Prism.Modularity;
 using Prism.Navigation;
@@ -22,6 +18,7 @@ using ShellApp.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Xaml;
+using SyslogOptions = ShellApp.Helpers.SyslogOptions;
 
 [assembly: InternalsVisibleTo("ShellApp.Android")]
 [assembly: XamlCompilation(XamlCompilationOptions.Compile)]
@@ -31,6 +28,9 @@ namespace ShellApp
     {
         public App() : base() { }
         public App(IPlatformInitializer initializer) : base(initializer) { }
+
+        private ILogger _logger;
+        public ILogger Logger => _logger ??= Container.Resolve<ILogger>();
 
         protected override async void OnInitialized()
         {
@@ -83,7 +83,14 @@ namespace ShellApp
             moduleCatalog.AddModule<AzureADAuthModule>();
         }
 
-        protected override void LoadModuleCompleted(IModuleInfo moduleInfo, Exception error, bool isHandled)
+        protected override void InitializeModules()
+        {
+            var manager = Container.Resolve<IModuleManager>();
+            manager.LoadModuleCompleted += (sender, args) => LoadModuleCompleted(args.ModuleInfo, args.Error, args.IsErrorHandled);
+
+        }
+
+        private void LoadModuleCompleted(IModuleInfo moduleInfo, Exception error, bool isHandled)
         {
             if(error != null)
             {

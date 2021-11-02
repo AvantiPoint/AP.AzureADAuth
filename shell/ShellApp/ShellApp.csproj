@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -17,10 +17,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Prism.Forms.Extended" Version="7.2.0.1054" />
-    <PackageReference Include="Prism.Plugin.Logging.AppCenter" Version="7.2.0.1421" />
-    <PackageReference Include="Prism.Plugin.Logging.Syslog" Version="7.2.0.1421" />
-    <PackageReference Include="Xamarin.Forms" Version="4.5.0.356" />
+    <PackageReference Include="Prism.DryIoc.Forms" Version="8.1.97" />
+    <PackageReference Include="Prism.Plugin.Logging.AppCenter" Version="8.1.16" />
+    <PackageReference Include="Prism.Plugin.Logging.Syslog" Version="8.1.16" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2196" />
   </ItemGroup>
 
   <ItemGroup>
