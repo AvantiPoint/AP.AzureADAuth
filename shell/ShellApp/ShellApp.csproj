@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Mobile.BuildTools" Version="1.4.0.638">
+    <PackageReference Include="Mobile.BuildTools" Version="2.0.245">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -26,4 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\AP.AzureADAuth\AP.AzureADAuth.csproj" />
   </ItemGroup>
+
+  <Target Name="MBTHack" BeforeTargets="Secrets" DependsOnTargets="MobileBuildToolsInit">
+  </Target>
 </Project>
