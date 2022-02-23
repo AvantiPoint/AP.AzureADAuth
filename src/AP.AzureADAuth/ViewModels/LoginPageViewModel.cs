@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using AP.AzureADAuth.Events;
@@ -16,21 +17,25 @@ namespace AP.AzureADAuth.ViewModels
 {
     internal class LoginPageViewModel : ReactiveObject, IPageLifecycleAware, IDestructible
     {
+        private CompositeDisposable _disposable { get; }
         private IAuthenticationService _authenticationService { get; }
         private IEventAggregator _eventAggregator { get; }
         private ILogger _logger { get; }
 
         public LoginPageViewModel(IAuthenticationService authenticationService, IEventAggregator eventAggregator, ILogger logger)
         {
+            _disposable = new CompositeDisposable();
             _authenticationService = authenticationService;
             _eventAggregator = eventAggregator;
             _logger = logger;
 
             LoginCommand = ReactiveCommand.CreateFromTask(OnLoginCommandExecuted,
                 this.WhenAnyValue(x => x.IsBusy)
-                .Select(x => !x));
+                .Select(x => !x))
+                .DisposeWith(_disposable);
             _isBusyHelper = this.WhenAnyObservable(x => x.LoginCommand.IsExecuting)
-                .ToProperty(this, x => x.IsBusy, false);
+                .ToProperty(this, nameof(IsBusy), false, false)
+                .DisposeWith(_disposable);
         }
 
         private ObservableAsPropertyHelper<bool> _isBusyHelper;
@@ -52,8 +57,8 @@ namespace AP.AzureADAuth.ViewModels
 
         public void Destroy()
         {
-            _isBusyHelper.Dispose();
-            _isBusyHelper = null;
+            if(!_disposable.IsDisposed)
+                _disposable.Dispose();
         }
 
         private async Task OnLoginCommandExecuted()
