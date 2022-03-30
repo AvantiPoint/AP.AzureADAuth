@@ -59,7 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2196" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401+905-sha.aeec18668-azdo.5950840" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainActivity.cs" />

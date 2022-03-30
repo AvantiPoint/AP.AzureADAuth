@@ -20,7 +20,7 @@
     <PackageReference Include="Prism.DryIoc.Forms" Version="8.1.97" />
     <PackageReference Include="Prism.Plugin.Logging.AppCenter" Version="8.1.16" />
     <PackageReference Include="Prism.Plugin.Logging.Syslog" Version="8.1.16" />
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2196" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401+905-sha.aeec18668-azdo.5950840" />
   </ItemGroup>
 
   <ItemGroup>
